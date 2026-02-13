@@ -430,6 +430,32 @@
   font-size: 1.02rem;
 }
 
+.rich-html {
+  line-height: 1.62;
+  color: #1f2f3b;
+}
+
+.rich-html p {
+  margin: 0 0 0.9rem;
+}
+
+.rich-html h2,
+.rich-html h3,
+.rich-html h4 {
+  margin: 1rem 0 0.55rem;
+  color: #0c4f74;
+}
+
+.rich-html a {
+  color: #0f86b7;
+  font-weight: 700;
+}
+
+.rich-html ul,
+.rich-html ol {
+  padding-left: 1.2rem;
+}
+
 .detail-cover {
   width: 100%;
   border-radius: 12px;

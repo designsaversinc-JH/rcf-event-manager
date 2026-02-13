@@ -3,6 +3,61 @@ import { Link, useParams } from 'react-router-dom';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import { fetchLanding, fetchPublicBlog } from '../../api/public';
 
+const stripScripts = (html) =>
+  String(html || '')
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '');
+
+const extractIframeSrc = (value) => {
+  const match = String(value || '').match(/<iframe[^>]*src=["']([^"']+)["']/i);
+  return match ? match[1] : null;
+};
+
+const normalizeYouTubeUrl = (raw) => {
+  if (!raw) return null;
+
+  const source = extractIframeSrc(raw) || String(raw).trim();
+
+  try {
+    const parsed = new URL(source);
+    const host = parsed.hostname.toLowerCase();
+
+    if (host.includes('youtu.be')) {
+      const id = parsed.pathname.replace('/', '').trim();
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+
+    if (host.includes('youtube.com')) {
+      if (parsed.pathname.startsWith('/embed/')) {
+        return source;
+      }
+
+      if (parsed.pathname.startsWith('/watch')) {
+        const id = parsed.searchParams.get('v');
+        return id ? `https://www.youtube.com/embed/${id}` : null;
+      }
+
+      if (parsed.pathname.startsWith('/shorts/')) {
+        const id = parsed.pathname.split('/shorts/')[1];
+        return id ? `https://www.youtube.com/embed/${id}` : null;
+      }
+    }
+  } catch (_error) {
+    // Ignore parse errors and fallback below.
+  }
+
+  const looseMatch = String(source).match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{6,})/i
+  );
+  if (looseMatch?.[1]) {
+    return `https://www.youtube.com/embed/${looseMatch[1]}`;
+  }
+
+  return source;
+};
+
+const looksLikeHtml = (value) => /<[^>]+>/.test(String(value || ''));
+
 const PostDetailPage = () => {
   const { identifier } = useParams();
   const [loading, setLoading] = useState(true);
@@ -41,6 +96,22 @@ const PostDetailPage = () => {
       })
       .slice(0, 4);
   }, [allBlogs, blog]);
+
+  const embeddedVideoUrl = useMemo(() => {
+    if (!blog) return null;
+
+    return (
+      normalizeYouTubeUrl(blog.vlogEmbed) ||
+      normalizeYouTubeUrl(blog.vlogURL) ||
+      normalizeYouTubeUrl(blog.vlogContent) ||
+      normalizeYouTubeUrl(blog.content)
+    );
+  }, [blog]);
+
+  const richHtml = useMemo(() => {
+    if (!blog) return '';
+    return stripScripts(blog.content || blog.vlogContent || '');
+  }, [blog]);
 
   const shareLinks = useMemo(() => {
     if (typeof window === 'undefined' || !blog) {
@@ -88,11 +159,11 @@ const PostDetailPage = () => {
 
           {blog.coverImg ? <img className="detail-cover" src={blog.coverImg} alt={blog.title} /> : null}
 
-          {blog.blogType === 'video' && blog.vlogEmbed ? (
+          {blog.blogType === 'video' && embeddedVideoUrl ? (
             <div className="video-wrap">
               <iframe
                 title={blog.title}
-                src={blog.vlogEmbed}
+                src={embeddedVideoUrl}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -100,12 +171,16 @@ const PostDetailPage = () => {
             </div>
           ) : null}
 
-          {blog.blogType === 'video' && !blog.vlogEmbed && blog.vlogURL ? (
+          {blog.blogType === 'video' && !embeddedVideoUrl && blog.vlogURL ? (
             <video className="video-file-player" src={blog.vlogURL} controls preload="metadata" />
           ) : null}
 
           <p className="detail-summary">{blog.summary}</p>
-          <div className="detail-content">{blog.content || blog.vlogContent}</div>
+          {looksLikeHtml(richHtml) ? (
+            <div className="detail-content rich-html" dangerouslySetInnerHTML={{ __html: richHtml }} />
+          ) : (
+            <div className="detail-content">{richHtml}</div>
+          )}
         </div>
 
         <aside className="detail-sidebar">
