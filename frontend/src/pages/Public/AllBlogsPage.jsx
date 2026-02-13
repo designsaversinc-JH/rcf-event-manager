@@ -30,7 +30,7 @@ const AllBlogsPage = () => {
       <section className="hero compact-hero small-hero">
         <div className="hero-content compact-hero-content">
           <h1>All Blogs</h1>
-          <p>Every available written and video article in one place.</p>
+          <p>Staggered feed of article and video cards.</p>
         </div>
       </section>
 
@@ -40,6 +40,7 @@ const AllBlogsPage = () => {
           categories={data.categories || []}
           tags={data.tags || []}
           mode="all"
+          staggered
         />
       </main>
     </div>

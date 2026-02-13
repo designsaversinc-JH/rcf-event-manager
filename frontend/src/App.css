@@ -252,6 +252,61 @@
   height: 145px;
 }
 
+.stagger-grid {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  align-items: start;
+}
+
+.stagger-grid .card-tall {
+  grid-row: span 2;
+}
+
+.card-image-wrap {
+  position: relative;
+}
+
+.type-pill {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.article-pill {
+  background: #fff3d5;
+  color: #8a5b00;
+}
+
+.video-pill {
+  background: #dff3ff;
+  color: #0a5a8a;
+}
+
+.article-card {
+  border-top: 4px solid #f3b323;
+}
+
+.video-card {
+  border-top: 4px solid #0f86b7;
+  background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
+}
+
+.compact-card.no-image {
+  min-height: 210px;
+}
+
+.type-only-header {
+  padding: 0.9rem 1rem 0;
+}
+
+.compact-card .blog-card-body p {
+  color: #4f5f6b;
+}
+
 .blog-card img {
   width: 100%;
   height: 180px;
@@ -294,6 +349,85 @@
   max-width: 860px;
   margin: 2rem auto;
   padding: 0 1rem 3rem;
+}
+
+.rich-detail {
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.detail-main {
+  background: #fff;
+  border: 1px solid #d8e4ec;
+  border-radius: 16px;
+  padding: 1.2rem;
+}
+
+.detail-sidebar {
+  display: grid;
+  gap: 0.8rem;
+  align-content: start;
+}
+
+.share-box,
+.related-box {
+  background: #fff;
+  border: 1px solid #d8e4ec;
+  border-radius: 14px;
+  padding: 0.9rem;
+}
+
+.share-box h3,
+.related-box h3 {
+  margin: 0 0 0.6rem;
+}
+
+.share-links {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.share-links a {
+  text-decoration: none;
+  background: #eef6fd;
+  color: #0c4f74;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+
+.related-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.related-item {
+  text-decoration: none;
+  border: 1px solid #d9e8f1;
+  border-radius: 12px;
+  padding: 0.55rem;
+  display: grid;
+  gap: 0.2rem;
+  background: #fcfdff;
+}
+
+.related-item strong {
+  color: #1a2733;
+}
+
+.related-item span {
+  color: #5c6f80;
+  font-size: 0.84rem;
+}
+
+.detail-summary {
+  color: #3d4d5a;
+  font-size: 1.02rem;
 }
 
 .detail-cover {
@@ -607,5 +741,9 @@ td a {
 
   .blog-main-tabs {
     flex-wrap: wrap;
+  }
+
+  .rich-detail {
+    grid-template-columns: 1fr;
   }
 }
