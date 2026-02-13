@@ -121,6 +121,7 @@ const SettingsPage = () => {
                 Visible
               </label>
               <button
+                className="danger-btn"
                 type="button"
                 onClick={() => {
                   const next = [...navigation];
@@ -160,7 +161,7 @@ const SettingsPage = () => {
               <button type="button" onClick={() => updateCategory(item.id, { name: item.name, description: item.description || '' })}>
                 Save
               </button>
-              <button type="button" onClick={async () => { await deleteCategory(item.id); await load(); }}>
+              <button className="danger-btn" type="button" onClick={async () => { await deleteCategory(item.id); await load(); }}>
                 Delete
               </button>
             </div>
@@ -188,7 +189,7 @@ const SettingsPage = () => {
           {tags.map((item) => (
             <div key={item.id} className="simple-row">
               <span>{item.name}</span>
-              <button type="button" onClick={async () => { await deleteTag(item.id); await load(); }}>
+              <button className="danger-btn" type="button" onClick={async () => { await deleteTag(item.id); await load(); }}>
                 Delete
               </button>
             </div>

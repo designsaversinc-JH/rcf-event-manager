@@ -67,7 +67,7 @@ const JobsPage = () => {
   };
 
   return (
-    <section>
+    <section className="admin-section">
       <h2>Jobs</h2>
       <form className="editor-form" onSubmit={onSubmit}>
         <div className="form-row">
@@ -135,8 +135,10 @@ const JobsPage = () => {
                 <td>{job.location || '-'}</td>
                 <td>{job.status}</td>
                 <td>
-                  <button type="button" onClick={() => onEdit(job)}>Edit</button>
-                  <button type="button" onClick={() => onDelete(job.id)}>Delete</button>
+                  <div className="table-actions">
+                    <button type="button" onClick={() => onEdit(job)}>Edit</button>
+                    <button className="danger-btn" type="button" onClick={() => onDelete(job.id)}>Delete</button>
+                  </div>
                 </td>
               </tr>
             ))}

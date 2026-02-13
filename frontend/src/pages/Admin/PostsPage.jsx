@@ -21,7 +21,7 @@ const PostsPage = () => {
   };
 
   return (
-    <section>
+    <section className="admin-section">
       <div className="page-title-row">
         <h2>Blogs</h2>
         <Link className="button-link" to="/admin/posts/new">Add Blog</Link>
@@ -46,8 +46,10 @@ const PostsPage = () => {
                 <td>{blog.status}</td>
                 <td>{blog.category || '-'}</td>
                 <td>
-                  <Link to={`/admin/posts/${blog.id}/edit`}>Edit</Link>
-                  <button type="button" onClick={() => onDelete(blog.id)}>Delete</button>
+                  <div className="table-actions">
+                    <Link className="table-link-btn" to={`/admin/posts/${blog.id}/edit`}>Edit</Link>
+                    <button className="danger-btn" type="button" onClick={() => onDelete(blog.id)}>Delete</button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -19,7 +19,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <section>
+    <section className="admin-section">
       <h2>Dashboard</h2>
       <div className="stat-grid">
         <article><h3>{data.totalBlogs}</h3><p>Total Blogs</p></article>
