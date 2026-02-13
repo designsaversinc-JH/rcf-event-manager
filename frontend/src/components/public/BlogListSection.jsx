@@ -64,7 +64,7 @@ const BlogListSection = ({
       </div>
 
       <div className={`blog-grid compact-grid ${staggered ? 'stagger-grid' : ''}`}>
-        {filtered.map((blog, index) => {
+        {filtered.map((blog) => {
           const isVideo = String(blog.blogType || '').toLowerCase() === 'video';
           const hasImage = Boolean(blog.coverImg);
 
@@ -72,17 +72,25 @@ const BlogListSection = ({
             <article
               key={blog.id}
               className={`blog-card compact-card ${isVideo ? 'video-card' : 'article-card'} ${
-                staggered && index % 5 === 0 ? 'card-tall' : ''
-              } ${!hasImage ? 'no-image' : ''}`}
+                !hasImage ? 'no-image' : ''
+              }`}
             >
               {hasImage ? (
                 <div className="card-image-wrap">
                   <img src={blog.coverImg} alt={blog.title} />
-                  {isVideo ? <span className="type-pill video-pill">Video</span> : <span className="type-pill article-pill">Article</span>}
+                  {isVideo ? (
+                    <span className="type-pill video-pill">Video</span>
+                  ) : (
+                    <span className="type-pill article-pill">Article</span>
+                  )}
                 </div>
               ) : (
                 <div className="type-only-header">
-                  {isVideo ? <span className="type-pill video-pill">Video</span> : <span className="type-pill article-pill">Article</span>}
+                  {isVideo ? (
+                    <span className="type-pill video-pill">Video</span>
+                  ) : (
+                    <span className="type-pill article-pill">Article</span>
+                  )}
                 </div>
               )}
 
@@ -92,7 +100,11 @@ const BlogListSection = ({
                 </p>
                 <h3>{blog.title}</h3>
                 <p>{blog.summary || 'Read this post for details and insights.'}</p>
-                <Link to={`/blogs/${blog.blogURL || blog.id}`}>{isVideo ? 'Watch now' : 'Read article'}</Link>
+                <div className="card-footer">
+                  <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
+                    {isVideo ? 'Watch now' : 'Read article'}
+                  </Link>
+                </div>
               </div>
             </article>
           );
