@@ -1,5 +1,10 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
 import * as authApi from '../api/auth';
 import { setAuthToken } from '../api/client';
 import { firebaseAuth } from '../firebase';
@@ -11,6 +16,7 @@ export const AuthContext = createContext({
   token: null,
   loading: true,
   login: async () => {},
+  signup: async () => {},
   logout: async () => {},
 });
 
@@ -80,6 +86,32 @@ export const AuthProvider = ({ children }) => {
     [applyAuth]
   );
 
+  const signup = useCallback(
+    async ({ name, email, password }) => {
+      if (!firebaseAuth) {
+        throw new Error('Firebase Auth is not configured in this environment.');
+      }
+
+      const authResult = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+
+      if (name?.trim()) {
+        await updateProfile(authResult.user, { displayName: name.trim() });
+      }
+
+      const idToken = await authResult.user.getIdToken(true);
+      const response = await authApi.firebaseSignup({
+        idToken,
+        name: name?.trim() || authResult.user.displayName || email,
+      });
+
+      const nextToken = response.data?.token;
+      const nextUser = response.data?.user;
+      applyAuth(nextToken, nextUser);
+      return nextUser;
+    },
+    [applyAuth]
+  );
+
   const logout = useCallback(async () => {
     if (firebaseAuth?.currentUser) {
       await signOut(firebaseAuth);
@@ -94,9 +126,10 @@ export const AuthProvider = ({ children }) => {
       token,
       loading,
       login,
+      signup,
       logout,
     }),
-    [user, token, loading, login, logout]
+    [user, token, loading, login, signup, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

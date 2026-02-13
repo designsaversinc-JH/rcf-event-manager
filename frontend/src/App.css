@@ -271,6 +271,12 @@ button,
   margin: 0;
 }
 
+.mode-switch {
+  background: transparent;
+  color: var(--brand-blue-dark);
+  border: 1px solid #c8d8e3;
+}
+
 .admin-shell {
   min-height: 100vh;
   display: grid;
