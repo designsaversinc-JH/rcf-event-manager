@@ -60,6 +60,20 @@ Backend requires a Firebase service account to verify Firebase ID tokens:
 - `FIREBASE_PRIVATE_KEY` (use escaped newlines: `\n`)
 - `FIREBASE_STORAGE_BUCKET`
 
+## Firestore to Neon Import
+To pull existing Firestore blog data into Neon (categories, tags, blogs):
+```bash
+cd backend
+npm install
+npm run import:firebase
+```
+Required backend env vars for the import:
+- `DATABASE_URL`
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_STORAGE_BUCKET` (recommended)
+
 ## Netlify (Frontend) Deploy
 `netlify.toml` is included:
 - base: `frontend`

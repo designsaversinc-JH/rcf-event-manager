@@ -7,7 +7,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "lint": "echo \"No lint step configured\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "import:firebase": "node scripts/importFirestoreToNeon.js"
   },
   "keywords": [],
   "author": "",

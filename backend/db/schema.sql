@@ -1,3 +1,46 @@
+-- Legacy schema cleanup:
+-- If prior versions created integer-based ids, drop conflicting tables so the
+-- current text-id schema can be applied cleanly.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'categories'
+      AND column_name = 'id'
+      AND data_type IN ('smallint', 'integer', 'bigint')
+  ) THEN
+    DROP TABLE IF EXISTS post_categories CASCADE;
+    DROP TABLE IF EXISTS posts CASCADE;
+    DROP TABLE IF EXISTS categories CASCADE;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'tags'
+      AND column_name = 'id'
+      AND data_type IN ('smallint', 'integer', 'bigint')
+  ) THEN
+    DROP TABLE IF EXISTS blog_tags CASCADE;
+    DROP TABLE IF EXISTS tags CASCADE;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'blogs'
+      AND column_name = 'id'
+      AND data_type IN ('smallint', 'integer', 'bigint')
+  ) THEN
+    DROP TABLE IF EXISTS blog_tags CASCADE;
+    DROP TABLE IF EXISTS blogs CASCADE;
+  END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS admin_users (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
