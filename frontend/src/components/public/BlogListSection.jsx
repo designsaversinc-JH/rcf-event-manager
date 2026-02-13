@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import EmptyList from './EmptyList';
 
 const VIDEO_PLACEHOLDER_URL =
   'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/envision-wealth-xq36fc/assets/03q1z4ndqvbn/Untitled_(2).jpeg';
@@ -67,66 +68,60 @@ const BlogListSection = ({
         </select>
       </div>
 
-      <div className={`blog-grid compact-grid ${staggered ? 'stagger-grid' : ''}`}>
-        {filtered.map((blog, index) => {
-          const isVideo = String(blog.blogType || '').toLowerCase() === 'video';
-          const resolvedImage = blog.coverImg || (isVideo ? VIDEO_PLACEHOLDER_URL : null);
-          const hasImage = Boolean(resolvedImage) && !failedImages[blog.id];
-          const layoutClass = staggered ? `masonry-${index % 6}` : '';
+      {!!filtered.length && (
+        <div className={`blog-grid compact-grid ${staggered ? 'stagger-grid' : ''}`}>
+          {filtered.map((blog, index) => {
+            const isVideo = String(blog.blogType || '').toLowerCase() === 'video';
+            const resolvedImage = blog.coverImg || (isVideo ? VIDEO_PLACEHOLDER_URL : null);
+            const hasImage = Boolean(resolvedImage) && !failedImages[blog.id];
+            const layoutClass = staggered ? `masonry-${index % 6}` : '';
 
-          return (
-            <article
-              key={blog.id}
-              className={`blog-card compact-card ${isVideo ? 'video-card' : 'article-card'} ${
-                !hasImage ? 'no-image' : ''
-              } ${layoutClass}`}
-            >
-              {hasImage ? (
-                <div className="card-image-wrap">
-                  <img
-                    src={resolvedImage}
-                    alt={blog.title}
-                    onError={() =>
-                      setFailedImages((prev) => ({
-                        ...prev,
-                        [blog.id]: true,
-                      }))
-                    }
-                  />
-                  {isVideo ? (
-                    <span className="type-pill video-pill">Video</span>
-                  ) : (
-                    <span className="type-pill article-pill">Article</span>
-                  )}
-                </div>
-              ) : (
-                <div className="type-only-header">
-                  {isVideo ? (
-                    <span className="type-pill video-pill">Video</span>
-                  ) : (
-                    <span className="type-pill article-pill">Article</span>
-                  )}
-                </div>
-              )}
+            return (
+              <article
+                key={blog.id}
+                className={`blog-card compact-card ${isVideo ? 'video-card' : 'article-card'} ${
+                  !hasImage ? 'no-image' : ''
+                } ${layoutClass}`}
+              >
+                {hasImage ? (
+                  <div className="card-image-wrap">
+                    <img
+                      src={resolvedImage}
+                      alt={blog.title}
+                      onError={() =>
+                        setFailedImages((prev) => ({
+                          ...prev,
+                          [blog.id]: true,
+                        }))
+                      }
+                    />
+                  </div>
+                ) : null}
 
-              <div className="blog-card-body">
-                <p className="meta">
-                  {blog.category || 'General'} • {formatDate(blog.publishDate)}
-                </p>
-                <h3>{blog.title}</h3>
-                <p>{blog.summary || 'Read this post for details and insights.'}</p>
-                <div className="card-footer">
-                  <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
-                    {isVideo ? 'Watch now' : 'Read article'}
-                  </Link>
+                <div className="blog-card-body">
+                  <p className="meta">
+                    {blog.category || 'General'} • {formatDate(blog.publishDate)}
+                  </p>
+                  <h3>{blog.title}</h3>
+                  <p>{blog.summary || 'Read this post for details and insights.'}</p>
+                  <div className="card-footer">
+                    <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
+                      {isVideo ? 'Watch now' : 'Read article'}
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
 
-      {!filtered.length ? <p className="empty-state">No blogs match this filter.</p> : null}
+      {!filtered.length ? (
+        <EmptyList
+          title="No blogs available"
+          description="No items match your filters right now. Try another category or tag."
+        />
+      ) : null}
     </section>
   );
 };

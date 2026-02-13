@@ -299,27 +299,6 @@
   position: relative;
 }
 
-.type-pill {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  border-radius: 999px;
-  padding: 0.25rem 0.65rem;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-}
-
-.article-pill {
-  background: #f5dda0;
-  color: #8a5b00;
-}
-
-.video-pill {
-  background: #d4ecfa;
-  color: #085781;
-}
-
 .article-card {
   border-top: 4px solid #e9ab16;
 }
@@ -332,10 +311,6 @@
 .compact-card.no-image {
   min-height: 300px;
   background: #edf1f5;
-}
-
-.type-only-header {
-  padding: 0.9rem 1rem 0;
 }
 
 .compact-card .blog-card-body p {
@@ -479,6 +454,26 @@
 .empty-state {
   margin-top: 1rem;
   color: var(--muted);
+}
+
+.empty-list-card {
+  margin-top: 1rem;
+  border: 1px dashed #bcd0de;
+  border-radius: 14px;
+  background: #f7fbff;
+  padding: 1.1rem 1rem;
+  text-align: center;
+}
+
+.empty-list-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #123d59;
+}
+
+.empty-list-card p {
+  margin: 0.4rem 0 0;
+  color: #4f6473;
 }
 
 .job-list {
