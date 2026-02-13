@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const VIDEO_PLACEHOLDER_URL =
+  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/envision-wealth-xq36fc/assets/03q1z4ndqvbn/Untitled_(2).jpeg';
+
 const formatDate = (value) => {
   if (!value) return 'Unscheduled';
   return new Date(value).toLocaleDateString();
@@ -64,20 +67,22 @@ const BlogListSection = ({
       </div>
 
       <div className={`blog-grid compact-grid ${staggered ? 'stagger-grid' : ''}`}>
-        {filtered.map((blog) => {
+        {filtered.map((blog, index) => {
           const isVideo = String(blog.blogType || '').toLowerCase() === 'video';
-          const hasImage = Boolean(blog.coverImg);
+          const resolvedImage = blog.coverImg || (isVideo ? VIDEO_PLACEHOLDER_URL : null);
+          const hasImage = Boolean(resolvedImage);
+          const layoutClass = staggered ? `masonry-${index % 6}` : '';
 
           return (
             <article
               key={blog.id}
               className={`blog-card compact-card ${isVideo ? 'video-card' : 'article-card'} ${
                 !hasImage ? 'no-image' : ''
-              }`}
+              } ${layoutClass}`}
             >
               {hasImage ? (
                 <div className="card-image-wrap">
-                  <img src={blog.coverImg} alt={blog.title} />
+                  <img src={resolvedImage} alt={blog.title} />
                   {isVideo ? (
                     <span className="type-pill video-pill">Video</span>
                   ) : (
