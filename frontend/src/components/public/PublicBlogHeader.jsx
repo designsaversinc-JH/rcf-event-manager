@@ -3,14 +3,11 @@ import { Link, NavLink } from 'react-router-dom';
 
 const LOGO_URL =
   'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png';
-const LOGO_MARK_URL =
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/fa9mlwq07cw7/EnvisionWealthPlanningLogo-Icon_(1).png';
 
 const PublicBlogHeader = () => (
   <header className="blog-topbar">
     <div className="blog-topbar-inner">
       <Link to="/" className="brand-logo-link">
-        <img src={LOGO_MARK_URL} alt="Envision mark" className="brand-mark-img" />
         <img src={LOGO_URL} alt="Envision Wealth Planning" className="brand-logo-img" />
       </Link>
 
@@ -20,7 +17,6 @@ const PublicBlogHeader = () => (
         </NavLink>
         <NavLink to="/all-blogs">All Blogs</NavLink>
         <NavLink to="/video-blogs">Video Blogs</NavLink>
-        <NavLink to="/admin/login">Admin</NavLink>
       </nav>
     </div>
   </header>

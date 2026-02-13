@@ -26,7 +26,8 @@
 .blog-topbar-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.7rem 1.2rem;
+  min-height: 80px;
+  padding: 0 1.2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -47,7 +48,7 @@
 }
 
 .brand-logo-img {
-  height: 20px;
+  height: 28px;
   width: auto;
   object-fit: contain;
 }
@@ -132,7 +133,7 @@
 }
 
 .compact-hero-content h1 {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.45rem, 2.4vw, 1.95rem);
 }
 
 .compact-hero-content p {
@@ -402,6 +403,41 @@
   background: #dff0fa;
 }
 
+.public-footer {
+  margin-top: 1.2rem;
+  background: #fff;
+  border-top: 1px solid #d8e4ec;
+}
+
+.public-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 64px;
+  padding: 0 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.public-footer-inner a {
+  text-decoration: none;
+  color: #1d2f3d;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 0.34rem 0.72rem;
+  border-radius: 999px;
+  background: #f2f7fb;
+  border: 1px solid #d7e4ed;
+}
+
+.public-footer-inner .footer-admin-link {
+  background: #eaf5fc;
+  color: #0e5f8b;
+  border-color: #c8dff0;
+}
+
 .empty-state {
   margin-top: 1rem;
   color: var(--muted);
@@ -529,6 +565,18 @@
 .rich-html ul,
 .rich-html ol {
   padding-left: 1.2rem;
+}
+
+.watch-on-youtube {
+  margin-top: 0.8rem;
+  display: inline-flex;
+  text-decoration: none;
+  background: #dbedf9;
+  border: 1px solid #b8d6eb;
+  color: #0e4e74;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
 }
 
 .detail-cover {
@@ -836,12 +884,15 @@ td a {
 
   .blog-topbar-inner {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    min-height: 80px;
   }
 
   .blog-main-tabs {
     flex-wrap: wrap;
+    justify-content: center;
   }
 
   .stagger-grid {

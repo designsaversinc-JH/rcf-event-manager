@@ -18,6 +18,7 @@ const BlogListSection = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTag, setSelectedTag] = useState('all');
+  const [failedImages, setFailedImages] = useState({});
 
   const filtered = useMemo(() => {
     return blogs.filter((blog) => {
@@ -70,7 +71,7 @@ const BlogListSection = ({
         {filtered.map((blog, index) => {
           const isVideo = String(blog.blogType || '').toLowerCase() === 'video';
           const resolvedImage = blog.coverImg || (isVideo ? VIDEO_PLACEHOLDER_URL : null);
-          const hasImage = Boolean(resolvedImage);
+          const hasImage = Boolean(resolvedImage) && !failedImages[blog.id];
           const layoutClass = staggered ? `masonry-${index % 6}` : '';
 
           return (
@@ -82,7 +83,16 @@ const BlogListSection = ({
             >
               {hasImage ? (
                 <div className="card-image-wrap">
-                  <img src={resolvedImage} alt={blog.title} />
+                  <img
+                    src={resolvedImage}
+                    alt={blog.title}
+                    onError={() =>
+                      setFailedImages((prev) => ({
+                        ...prev,
+                        [blog.id]: true,
+                      }))
+                    }
+                  />
                   {isVideo ? (
                     <span className="type-pill video-pill">Video</span>
                   ) : (

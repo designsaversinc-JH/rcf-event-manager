@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
+import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import BlogListSection from '../../components/public/BlogListSection';
 import { fetchLanding } from '../../api/public';
 
 const AllBlogsPage = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({ blogs: [], categories: [], tags: [] });
+  const [data, setData] = useState({ blogs: [], categories: [], tags: [], settings: null });
 
   useEffect(() => {
     const load = async () => {
@@ -43,6 +44,8 @@ const AllBlogsPage = () => {
           staggered
         />
       </main>
+
+      <PublicBlogFooter settings={data.settings} />
     </div>
   );
 };

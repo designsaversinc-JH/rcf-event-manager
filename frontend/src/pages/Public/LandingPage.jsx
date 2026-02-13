@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
+import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import BlogListSection from '../../components/public/BlogListSection';
 import { fetchLanding } from '../../api/public';
 
@@ -9,6 +10,7 @@ const LandingPage = () => {
     blogs: [],
     categories: [],
     tags: [],
+    settings: null,
   });
 
   useEffect(() => {
@@ -59,6 +61,8 @@ const LandingPage = () => {
           staggered
         />
       </main>
+
+      <PublicBlogFooter settings={data.settings} />
     </div>
   );
 };

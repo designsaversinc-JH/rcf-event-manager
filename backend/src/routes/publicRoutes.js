@@ -1,5 +1,6 @@
 const express = require('express');
 const { query } = require('../config/db');
+const { getFirestoreDb, isFirebaseAdminConfigured } = require('../config/firebaseAdmin');
 
 const router = express.Router();
 
@@ -22,6 +23,51 @@ const mapBlog = (row) => ({
   vlogURL: row.vlog_url,
   blogTags: row.blog_tags || [],
 });
+
+const fetchFirestoreTaxonomy = async () => {
+  if (!isFirebaseAdminConfigured()) {
+    return null;
+  }
+
+  const db = getFirestoreDb();
+  const [categoriesSnapshot, tagsSnapshot] = await Promise.all([
+    db.collection('categories').get(),
+    db.collection('tags').get(),
+  ]);
+
+  const categories = categoriesSnapshot.docs
+    .map((doc) => {
+      const data = doc.data() || {};
+      const name = String(data.name || '').trim();
+      if (!name) return null;
+      return {
+        id: String(data.id || doc.id),
+        name,
+        description: data.description ? String(data.description) : null,
+        updated_at: null,
+        created_at: null,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const tags = tagsSnapshot.docs
+    .map((doc) => {
+      const data = doc.data() || {};
+      const name = String(data.name || '').trim();
+      if (!name) return null;
+      return {
+        id: String(data.id || doc.id),
+        name,
+        updated_at: null,
+        created_at: null,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return { categories, tags };
+};
 
 router.get('/landing', async (_req, res, next) => {
   try {
@@ -49,13 +95,20 @@ router.get('/landing', async (_req, res, next) => {
         query('SELECT id, name, updated_at, created_at FROM tags ORDER BY name ASC'),
       ]);
 
+    let taxonomy = null;
+    try {
+      taxonomy = await fetchFirestoreTaxonomy();
+    } catch (_error) {
+      taxonomy = null;
+    }
+
     res.status(200).json({
       settings: settingsResult.rows[0] || null,
       navigation: navResult.rows,
       blogs: blogsResult.rows.map(mapBlog),
       jobs: jobsResult.rows,
-      categories: categoriesResult.rows,
-      tags: tagsResult.rows,
+      categories: taxonomy?.categories?.length ? taxonomy.categories : categoriesResult.rows,
+      tags: taxonomy?.tags?.length ? taxonomy.tags : tagsResult.rows,
     });
   } catch (error) {
     next(error);

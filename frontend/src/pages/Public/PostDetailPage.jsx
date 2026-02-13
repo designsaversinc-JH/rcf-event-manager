@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
+import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import { fetchLanding, fetchPublicBlog } from '../../api/public';
 
 const stripScripts = (html) =>
@@ -13,9 +14,8 @@ const extractIframeSrc = (value) => {
   return match ? match[1] : null;
 };
 
-const normalizeYouTubeUrl = (raw) => {
+const extractYouTubeId = (raw) => {
   if (!raw) return null;
-
   const source = extractIframeSrc(raw) || String(raw).trim();
 
   try {
@@ -23,37 +23,47 @@ const normalizeYouTubeUrl = (raw) => {
     const host = parsed.hostname.toLowerCase();
 
     if (host.includes('youtu.be')) {
-      const id = parsed.pathname.replace('/', '').trim();
-      return id ? `https://www.youtube.com/embed/${id}` : null;
+      return parsed.pathname.replace('/', '').trim() || null;
     }
 
     if (host.includes('youtube.com')) {
       if (parsed.pathname.startsWith('/embed/')) {
-        return source;
+        return parsed.pathname.split('/embed/')[1] || null;
       }
 
       if (parsed.pathname.startsWith('/watch')) {
-        const id = parsed.searchParams.get('v');
-        return id ? `https://www.youtube.com/embed/${id}` : null;
+        return parsed.searchParams.get('v');
       }
 
       if (parsed.pathname.startsWith('/shorts/')) {
-        const id = parsed.pathname.split('/shorts/')[1];
-        return id ? `https://www.youtube.com/embed/${id}` : null;
+        return parsed.pathname.split('/shorts/')[1] || null;
       }
     }
   } catch (_error) {
-    // Ignore parse errors and fallback below.
+    // Ignore parse errors.
   }
 
   const looseMatch = String(source).match(
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{6,})/i
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{6,})/i
   );
-  if (looseMatch?.[1]) {
-    return `https://www.youtube.com/embed/${looseMatch[1]}`;
-  }
 
-  return source;
+  return looseMatch?.[1] || null;
+};
+
+const normalizeYouTubeUrl = (raw) => {
+  const id = extractYouTubeId(raw);
+  if (id) {
+    return `https://www.youtube.com/embed/${id}`;
+  }
+  return null;
+};
+
+const normalizeYouTubeWatchUrl = (raw) => {
+  const id = extractYouTubeId(raw);
+  if (id) {
+    return `https://www.youtube.com/watch?v=${id}`;
+  }
+  return null;
 };
 
 const looksLikeHtml = (value) => /<[^>]+>/.test(String(value || ''));
@@ -63,6 +73,7 @@ const PostDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [blog, setBlog] = useState(null);
   const [allBlogs, setAllBlogs] = useState([]);
+  const [settings, setSettings] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -73,6 +84,7 @@ const PostDetailPage = () => {
         ]);
         setBlog(blogRes.data || null);
         setAllBlogs(landingRes.data?.blogs || []);
+        setSettings(landingRes.data?.settings || null);
       } finally {
         setLoading(false);
       }
@@ -105,6 +117,17 @@ const PostDetailPage = () => {
       normalizeYouTubeUrl(blog.vlogURL) ||
       normalizeYouTubeUrl(blog.vlogContent) ||
       normalizeYouTubeUrl(blog.content)
+    );
+  }, [blog]);
+
+  const watchVideoUrl = useMemo(() => {
+    if (!blog) return null;
+
+    return (
+      normalizeYouTubeWatchUrl(blog.vlogEmbed) ||
+      normalizeYouTubeWatchUrl(blog.vlogURL) ||
+      normalizeYouTubeWatchUrl(blog.vlogContent) ||
+      normalizeYouTubeWatchUrl(blog.content)
     );
   }, [blog]);
 
@@ -171,6 +194,12 @@ const PostDetailPage = () => {
             </div>
           ) : null}
 
+          {watchVideoUrl ? (
+            <a href={watchVideoUrl} target="_blank" rel="noreferrer" className="watch-on-youtube">
+              Open video on YouTube
+            </a>
+          ) : null}
+
           {blog.blogType === 'video' && !embeddedVideoUrl && blog.vlogURL ? (
             <video className="video-file-player" src={blog.vlogURL} controls preload="metadata" />
           ) : null}
@@ -207,6 +236,8 @@ const PostDetailPage = () => {
           </section>
         </aside>
       </article>
+
+      <PublicBlogFooter settings={settings} />
     </div>
   );
 };
