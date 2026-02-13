@@ -7,13 +7,46 @@ const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim())
-  : ['http://localhost:3000'];
+const normalizeOrigin = (value) => {
+  const trimmed = String(value || '').trim().replace(/\/+$/, '');
+  if (!trimmed) {
+    return null;
+  }
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+};
+
+const configuredOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',')
+      .map((origin) => normalizeOrigin(origin))
+      .filter(Boolean)
+  : [];
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow non-browser requests (health checks, server-to-server calls).
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const normalizedOrigin = normalizeOrigin(origin);
+      const isLocalhost = /^https?:\/\/localhost(?::\d+)?$/.test(normalizedOrigin || '');
+
+      if (configuredOrigins.length === 0) {
+        return callback(null, true);
+      }
+
+      if (isLocalhost || configuredOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
   })
 );

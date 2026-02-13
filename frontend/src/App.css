@@ -115,6 +115,13 @@
   color: var(--muted);
 }
 
+.blog-filters {
+  margin: 0.8rem 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 280px));
+  gap: 0.6rem;
+}
+
 .blog-grid {
   margin-top: 1rem;
   display: grid;
@@ -147,6 +154,11 @@
 
 .blog-card-body h3 {
   margin: 0.3rem 0;
+}
+
+.empty-state {
+  margin-top: 1rem;
+  color: var(--muted);
 }
 
 .job-list {
@@ -448,6 +460,10 @@ td a {
   }
 
   .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-filters {
     grid-template-columns: 1fr;
   }
 

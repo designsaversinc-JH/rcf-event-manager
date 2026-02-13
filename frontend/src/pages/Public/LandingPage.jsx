@@ -14,7 +14,12 @@ const LandingPage = () => {
     navigation: [],
     blogs: [],
     jobs: [],
+    categories: [],
+    tags: [],
   });
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
+  const [selectedTag, setSelectedTag] = useState('all');
 
   useEffect(() => {
     const load = async () => {
@@ -29,7 +34,28 @@ const LandingPage = () => {
     load();
   }, []);
 
-  const topBlogs = useMemo(() => data.blogs.slice(0, 6), [data.blogs]);
+  const filteredBlogs = useMemo(() => {
+    return data.blogs.filter((blog) => {
+      if (selectedCategory !== 'all' && (blog.category || '').toLowerCase() !== selectedCategory) {
+        return false;
+      }
+
+      if (selectedType !== 'all' && (blog.blogType || '').toLowerCase() !== selectedType) {
+        return false;
+      }
+
+      if (
+        selectedTag !== 'all' &&
+        !(blog.blogTags || []).some((tag) => String(tag).toLowerCase() === selectedTag)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [data.blogs, selectedCategory, selectedType, selectedTag]);
+
+  const topBlogs = useMemo(() => filteredBlogs.slice(0, 12), [filteredBlogs]);
 
   if (loading) {
     return <div className="page-loading">Loading site...</div>;
@@ -79,6 +105,29 @@ const LandingPage = () => {
             <h2>Latest Insights</h2>
             <p>Written and video blogs managed from your admin dashboard.</p>
           </div>
+          <div className="blog-filters">
+            <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+              <option value="all">All Categories</option>
+              {data.categories.map((category) => (
+                <option key={category.id} value={category.name.toLowerCase()}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            <select value={selectedType} onChange={(event) => setSelectedType(event.target.value)}>
+              <option value="all">All Types</option>
+              <option value="written">Articles</option>
+              <option value="video">Video</option>
+            </select>
+            <select value={selectedTag} onChange={(event) => setSelectedTag(event.target.value)}>
+              <option value="all">All Tags</option>
+              {data.tags.map((tag) => (
+                <option key={tag.id} value={tag.name.toLowerCase()}>
+                  {tag.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="blog-grid">
             {topBlogs.map((blog) => (
               <article key={blog.id} className="blog-card">
@@ -92,6 +141,7 @@ const LandingPage = () => {
               </article>
             ))}
           </div>
+          {!topBlogs.length ? <p className="empty-state">No blogs match this filter.</p> : null}
         </section>
 
         <section id="jobs" className="content-section jobs-section">
