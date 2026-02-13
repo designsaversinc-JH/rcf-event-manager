@@ -40,6 +40,7 @@ const VideoBlogsPage = () => {
           categories={data.categories || []}
           tags={data.tags || []}
           mode="video"
+          staggered
         />
       </main>
     </div>

@@ -56,6 +56,7 @@ const LandingPage = () => {
           categories={data.categories || []}
           tags={data.tags || []}
           mode="all"
+          staggered
         />
       </main>
     </div>
