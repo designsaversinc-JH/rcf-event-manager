@@ -1,15 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import BlogListSection from '../../components/public/BlogListSection';
 import { fetchLanding } from '../../api/public';
 
-const LandingPage = () => {
+const VideoBlogsPage = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({
-    blogs: [],
-    categories: [],
-    tags: [],
-  });
+  const [data, setData] = useState({ blogs: [], categories: [], tags: [] });
 
   useEffect(() => {
     const load = async () => {
@@ -24,42 +20,30 @@ const LandingPage = () => {
     load();
   }, []);
 
-  const latest = useMemo(() => {
-    return [...(data.blogs || [])].slice(0, 6);
-  }, [data.blogs]);
-
   if (loading) {
-    return <div className="page-loading">Loading blogs...</div>;
+    return <div className="page-loading">Loading videos...</div>;
   }
 
   return (
     <div className="public-page compact-public">
       <PublicBlogHeader />
-
-      <section className="hero compact-hero">
+      <section className="hero compact-hero small-hero">
         <div className="hero-content compact-hero-content">
-          <h1>Envision&apos;s Blog Articals</h1>
-          <p>
-            Discover personalized approaches to managing your finances, ensuring peace of mind
-            and lasting prosperity
-          </p>
+          <h1>Video Blogs</h1>
+          <p>Watch planning insights and advisor walkthroughs.</p>
         </div>
       </section>
 
       <main className="landing-main compact-main">
-        <div className="section-title-row">
-          <h2>Recent Posts</h2>
-          <p>Browse recent insights or use the tabs above for full listings.</p>
-        </div>
         <BlogListSection
-          blogs={latest}
+          blogs={data.blogs || []}
           categories={data.categories || []}
           tags={data.tags || []}
-          mode="all"
+          mode="video"
         />
       </main>
     </div>
   );
 };
 
-export default LandingPage;
+export default VideoBlogsPage;

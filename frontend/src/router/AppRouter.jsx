@@ -4,6 +4,8 @@ import PublicLayout from '../components/layout/PublicLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 import ProtectedRoute from '../components/common/ProtectedRoute';
 import LandingPage from '../pages/Public/LandingPage';
+import AllBlogsPage from '../pages/Public/AllBlogsPage';
+import VideoBlogsPage from '../pages/Public/VideoBlogsPage';
 import PostDetailPage from '../pages/Public/PostDetailPage';
 import LoginPage from '../pages/Admin/LoginPage';
 import DashboardPage from '../pages/Admin/DashboardPage';
@@ -17,6 +19,8 @@ const AppRouter = () => (
   <Routes>
     <Route path="/" element={<PublicLayout />}>
       <Route index element={<LandingPage />} />
+      <Route path="all-blogs" element={<AllBlogsPage />} />
+      <Route path="video-blogs" element={<VideoBlogsPage />} />
       <Route path="blogs/:identifier" element={<PostDetailPage />} />
     </Route>
 
