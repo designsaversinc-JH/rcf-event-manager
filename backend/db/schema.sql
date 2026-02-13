@@ -1,46 +1,232 @@
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'viewer' CHECK (role IN ('admin', 'editor', 'author', 'viewer')),
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS admin_users (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  firebase_uid TEXT UNIQUE,
+  name TEXT NOT NULL,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'admin',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE admin_users
+ADD COLUMN IF NOT EXISTS firebase_uid TEXT UNIQUE;
 
 CREATE TABLE IF NOT EXISTS categories (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,
-    slug TEXT NOT NULL UNIQUE,
-    description TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  description TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS posts (
-    id SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    slug TEXT NOT NULL UNIQUE,
-    excerpt TEXT,
-    content TEXT NOT NULL,
-    cover_image_url TEXT,
-    status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
-    published_at TIMESTAMPTZ,
-    author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS tags (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS post_categories (
-    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-    category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
-    PRIMARY KEY (post_id, category_id)
+CREATE TABLE IF NOT EXISTS blogs (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT,
+  publish_date TIMESTAMPTZ,
+  author TEXT,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
+  category TEXT,
+  cover_img TEXT,
+  blog_url TEXT UNIQUE,
+  summary TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  blog_type TEXT NOT NULL DEFAULT 'written' CHECK (blog_type IN ('written', 'video')),
+  vlog_content TEXT,
+  vlog_embed TEXT,
+  vlog_url TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_posts_status ON posts(status);
-CREATE INDEX IF NOT EXISTS idx_posts_published_at ON posts(published_at DESC NULLS LAST);
-CREATE INDEX IF NOT EXISTS idx_posts_author_id ON posts(author_id);
-CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
+CREATE TABLE IF NOT EXISTS blog_tags (
+  blog_id TEXT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+  tag_id TEXT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+  PRIMARY KEY (blog_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS jobs (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  location TEXT,
+  department TEXT,
+  summary TEXT,
+  apply_url TEXT,
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'closed')),
+  publish_date TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS navigation_items (
+  id TEXT PRIMARY KEY,
+  label TEXT NOT NULL,
+  href TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  visible BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS site_settings (
+  id TEXT PRIMARY KEY,
+  site_title TEXT NOT NULL DEFAULT 'Envision Wealth Planning',
+  hero_title TEXT NOT NULL DEFAULT 'Align Your Investments & Retirement Plans With What Matters to You.',
+  hero_subtitle TEXT NOT NULL DEFAULT 'Strategic guidance and practical insight for families and businesses.',
+  primary_cta_label TEXT NOT NULL DEFAULT 'For Myself',
+  primary_cta_href TEXT NOT NULL DEFAULT '/#blogs',
+  secondary_cta_label TEXT NOT NULL DEFAULT 'For My Business',
+  secondary_cta_href TEXT NOT NULL DEFAULT '/#jobs',
+  accent_message TEXT NOT NULL DEFAULT 'Latest market insights and hiring updates.',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_blogs_status_publish_date ON blogs(status, publish_date DESC);
+CREATE INDEX IF NOT EXISTS idx_jobs_status_publish_date ON jobs(status, publish_date DESC);
+
+INSERT INTO admin_users (id, email, name, password_hash, role)
+VALUES (
+  'admin-user-1',
+  'admin@example.com',
+  'Client Admin',
+  '$2a$12$o4UvEoq3U0aUKhzi8yQsDuvcEqM75NhS4l6a4HN5ZLVEcUjp8iIKO',
+  'admin'
+)
+ON CONFLICT (email) DO NOTHING;
+
+INSERT INTO site_settings (
+  id,
+  site_title,
+  hero_title,
+  hero_subtitle,
+  primary_cta_label,
+  primary_cta_href,
+  secondary_cta_label,
+  secondary_cta_href,
+  accent_message
+)
+VALUES (
+  'default',
+  'Envision Wealth Planning',
+  'Align Your Investments & Retirement Plans With What Matters to You.',
+  'Thoughtful planning, practical action, and clear communication for every chapter.',
+  'For Myself',
+  '/#blogs',
+  'For My Business',
+  '/#jobs',
+  'Founder James Brewer wins 2025 ESG Investment Advisor of the Year!'
+)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO navigation_items (id, label, href, position, visible)
+VALUES
+  ('nav-1', 'Our Approach', '/approach', 1, TRUE),
+  ('nav-2', 'Our Services', '/services', 2, TRUE),
+  ('nav-3', 'Insights', '/#blogs', 3, TRUE),
+  ('nav-4', 'Careers', '/#jobs', 4, TRUE),
+  ('nav-5', 'Contact', '/contact', 5, TRUE)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO categories (id, name, description)
+VALUES
+  ('cat-1', 'Market Insights', 'Updates on investment and financial planning trends.'),
+  ('cat-2', 'Retirement', 'Retirement planning best practices and updates.'),
+  ('cat-3', 'Business Planning', 'Guidance for business owners and executives.')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO tags (id, name)
+VALUES
+  ('tag-1', 'investing'),
+  ('tag-2', 'retirement'),
+  ('tag-3', 'business')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO blogs (
+  id,
+  title,
+  content,
+  publish_date,
+  author,
+  status,
+  category,
+  cover_img,
+  blog_url,
+  summary,
+  blog_type,
+  vlog_content,
+  vlog_embed,
+  vlog_url
+)
+VALUES
+  (
+    'blog-1',
+    '2026 Market Outlook for Families and Founders',
+    'This written blog highlights practical allocation changes to consider this year.',
+    NOW(),
+    'Client Admin',
+    'published',
+    'Market Insights',
+    'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80',
+    '2026-market-outlook',
+    'A concise look at allocation and risk posture in 2026.',
+    'written',
+    NULL,
+    NULL,
+    NULL
+  ),
+  (
+    'blog-2',
+    'Video: Building a Tax-Efficient Retirement Income Plan',
+    NULL,
+    NOW(),
+    'Client Admin',
+    'published',
+    'Retirement',
+    'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
+    'video-retirement-income-plan',
+    'A video walkthrough of retirement income planning fundamentals.',
+    'video',
+    'In this short video, we break down sequencing, taxes, and withdrawal discipline.',
+    'https://www.youtube.com/embed/6Xbtf9W6_5k',
+    'https://www.youtube.com/watch?v=6Xbtf9W6_5k'
+  )
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO blog_tags (blog_id, tag_id)
+VALUES
+  ('blog-1', 'tag-1'),
+  ('blog-1', 'tag-2'),
+  ('blog-2', 'tag-2')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO jobs (id, title, location, department, summary, apply_url, status, publish_date)
+VALUES
+  (
+    'job-1',
+    'Client Relationship Associate',
+    'Chicago, IL',
+    'Operations',
+    'Support client onboarding and advisor communications across planning workflows.',
+    'https://example.com/jobs/client-relationship-associate',
+    'open',
+    NOW()
+  ),
+  (
+    'job-2',
+    'Financial Planning Analyst',
+    'Remote (US)',
+    'Planning',
+    'Build plan scenarios, portfolio reviews, and client-ready analysis decks.',
+    'https://example.com/jobs/financial-planning-analyst',
+    'open',
+    NOW()
+  )
+ON CONFLICT (id) DO NOTHING;

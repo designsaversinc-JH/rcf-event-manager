@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Merriweather:wght@400;700&display=swap');
+
+:root {
+  --brand-blue: #0f86b7;
+  --brand-blue-dark: #04597a;
+  --brand-gold: #f3b323;
+  --ink: #101820;
+  --muted: #4f5f6b;
+  --surface: #f7fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Montserrat, sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+
+a {
+  color: var(--brand-blue-dark);
+}

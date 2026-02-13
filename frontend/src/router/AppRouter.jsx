@@ -1,0 +1,46 @@
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import PublicLayout from '../components/layout/PublicLayout';
+import AdminLayout from '../components/layout/AdminLayout';
+import ProtectedRoute from '../components/common/ProtectedRoute';
+import LandingPage from '../pages/Public/LandingPage';
+import PostDetailPage from '../pages/Public/PostDetailPage';
+import LoginPage from '../pages/Admin/LoginPage';
+import DashboardPage from '../pages/Admin/DashboardPage';
+import PostsPage from '../pages/Admin/PostsPage';
+import PostEditorPage from '../pages/Admin/PostEditorPage';
+import JobsPage from '../pages/Admin/JobsPage';
+import SettingsPage from '../pages/Admin/SettingsPage';
+import NotFoundPage from '../pages/NotFoundPage';
+
+const AppRouter = () => (
+  <Routes>
+    <Route path="/" element={<PublicLayout />}>
+      <Route index element={<LandingPage />} />
+      <Route path="blogs/:identifier" element={<PostDetailPage />} />
+    </Route>
+
+    <Route path="/admin/login" element={<LoginPage />} />
+
+    <Route
+      path="/admin"
+      element={
+        <ProtectedRoute>
+          <AdminLayout />
+        </ProtectedRoute>
+      }
+    >
+      <Route index element={<Navigate to="dashboard" replace />} />
+      <Route path="dashboard" element={<DashboardPage />} />
+      <Route path="posts" element={<PostsPage />} />
+      <Route path="posts/new" element={<PostEditorPage />} />
+      <Route path="posts/:id/edit" element={<PostEditorPage />} />
+      <Route path="jobs" element={<JobsPage />} />
+      <Route path="settings" element={<SettingsPage />} />
+    </Route>
+
+    <Route path="*" element={<NotFoundPage />} />
+  </Routes>
+);
+
+export default AppRouter;

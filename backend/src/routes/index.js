@@ -1,14 +1,12 @@
 const express = require('express');
 const authRoutes = require('./authRoutes');
-const postRoutes = require('./postRoutes');
-const categoryRoutes = require('./categoryRoutes');
-const userRoutes = require('./userRoutes');
+const publicRoutes = require('./publicRoutes');
+const adminRoutes = require('./adminRoutes');
 
 const router = express.Router();
 
 router.use('/auth', authRoutes);
-router.use('/posts', postRoutes);
-router.use('/categories', categoryRoutes);
-router.use('/users', userRoutes);
+router.use('/public', publicRoutes);
+router.use('/admin', adminRoutes);
 
 module.exports = router;

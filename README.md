@@ -1,49 +1,82 @@
-# BlogFlow Management App v2
+# Blog + Jobs Management App (Rebuilt)
 
-Full-stack blog management platform featuring an Express/PostgreSQL API and a React SPA. It delivers a public-facing blog landing page plus an authenticated admin workspace with content and team management.
+This project was rebuilt as a simple full-stack app for your client workflow:
+- Public landing page with branded hero, dynamic navigation, published blogs, and open jobs.
+- Admin login + dashboard.
+- CRUD for written/video blogs.
+- CRUD for jobs.
+- Settings panel to edit navigation, hero text, CTA buttons, categories, and tags.
 
-## Monorepo Layout
+## Stack
+- Frontend: React + React Router + Axios
+- Backend: Express + PostgreSQL + JWT auth
+- Firebase: Auth (admin sign-in) + Storage (blog image/video uploads)
+
+## Default Admin Login
+- Email: `admin@example.com`
+- Password: `Password123!`
+
+## Firebase Schema Mapping
+The backend schema mirrors your Firebase fields using SQL tables:
+- `blogs` (title, content, publishDate, author, status, category, coverImg, blogURL, summary, blogType, vlogContent, vlogEmbed, vlogURL, timestamps)
+- `categories` (id, name, description, timestamps)
+- `tags` (id, name, timestamps)
+- `blog_tags` join table for blog-tag assignment
+
+Additional tables for your requested features:
+- `jobs`
+- `navigation_items`
+- `site_settings`
+- `admin_users`
+
+## Run Locally
+1. Backend
+```bash
+cd backend
+npm install
+npm run start
 ```
-backend/   # Express API, database schema, seed data
-frontend/  # React SPA for public site + admin console
+
+2. Frontend
+```bash
+cd frontend
+npm install
+npm start
 ```
 
-## Key Features
-- Reader-friendly landing page with featured posts, category filters, and detail pages.
-- Role-based admin workspace with dashboard insights, CRUD for posts/categories, and user management.
-- JWT authentication, secure password hashing, and optional Cloudinary integration for hero images.
-- Structured code organization across controllers, models, routes (backend) and modular pages/components (frontend).
+Frontend expects backend at `http://localhost:5000/api` by default.
 
-## Quick Start
-1. **Backend**
-   ```bash
-   cd backend
-   npm install
-   cp .env .env.local # or edit .env with real values
-   npm run dev
-   ```
-   - Ensure `DATABASE_URL` points to a PostgreSQL instance. Run `db/schema.sql` and `db/seed.sql` to bootstrap tables and a sample admin (`admin@example.com` / `Password123!`).
-2. **Frontend**
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
-   - Optionally set `REACT_APP_API_URL` in `.env.local` if the API isn’t on `http://localhost:5000/api`.
+## Firebase Web Setup
+- Firebase app config is wired in `frontend/src/firebase.js`.
+- Use `frontend/.env.local` for your project values (`REACT_APP_FIREBASE_*`).
+- Analytics initialization runs at startup when config is present and browser support is available.
+- Admin login now uses Firebase email/password auth, then exchanges ID token with backend `/api/auth/firebase-login`.
+- Admin blog editor can upload cover images and video files to Firebase Storage.
 
-## Common Workflows
-- Create/edit posts via `/admin/posts` (authors can only modify their own).
-- Manage taxonomy under `/admin/categories`.
-- Invite teammates under `/admin/users` (admin only).
-- Monitor traffic-ready content from the dashboard overview.
+## Backend Firebase Admin Setup
+Backend requires a Firebase service account to verify Firebase ID tokens:
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY` (use escaped newlines: `\n`)
+- `FIREBASE_STORAGE_BUCKET`
 
-## Testing
-- `backend`: add tests or integration scripts as needed. Current focus is the API skeleton.
-- `frontend`: `npm test` runs React Testing Library checks; a baseline smoke test validates the landing page render.
+## Netlify (Frontend) Deploy
+`netlify.toml` is included:
+- base: `frontend`
+- build command: `npm run build`
+- publish directory: `build`
+- SPA redirect: `/* -> /index.html`
 
-## Next Enhancements
-- Add markdown/RichText editor with preview for post bodies.
-- Introduce automated API tests and frontend e2e coverage.
-- Hook up analytics + notifications for editorial workflows.
+Set these Netlify environment variables:
+- `REACT_APP_API_URL` = your deployed backend API URL (example: `https://api.yourdomain.com/api`)
+- `REACT_APP_FIREBASE_API_KEY`
+- `REACT_APP_FIREBASE_AUTH_DOMAIN`
+- `REACT_APP_FIREBASE_PROJECT_ID`
+- `REACT_APP_FIREBASE_STORAGE_BUCKET`
+- `REACT_APP_FIREBASE_MESSAGING_SENDER_ID`
+- `REACT_APP_FIREBASE_APP_ID`
+- `REACT_APP_FIREBASE_MEASUREMENT_ID`
 
-Happy publishing!
+## Notes
+- DB schema + seed data are in `backend/db/schema.sql` and run automatically on backend start.
+- If you keep production-like secrets in `backend/.env`, rotate credentials before sharing this repo.
