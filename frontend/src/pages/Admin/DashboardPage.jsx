@@ -23,8 +23,8 @@ const DashboardPage = () => {
       <h2>Dashboard</h2>
       <div className="stat-grid">
         <article><h3>{data.totalBlogs}</h3><p>Total Blogs</p></article>
-        <article><h3>{data.openJobs}</h3><p>Open Jobs</p></article>
         <article><h3>{data.totalCategories}</h3><p>Categories</p></article>
+        <article><h3>{data.totalBlogs}</h3><p>Published + Draft</p></article>
         <article><h3>{data.totalTags}</h3><p>Tags</p></article>
       </div>
 

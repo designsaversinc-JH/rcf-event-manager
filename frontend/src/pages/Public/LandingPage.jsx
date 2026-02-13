@@ -13,7 +13,6 @@ const LandingPage = () => {
     settings: null,
     navigation: [],
     blogs: [],
-    jobs: [],
     categories: [],
     tags: [],
   });
@@ -103,7 +102,7 @@ const LandingPage = () => {
         <section id="blogs" className="content-section">
           <div className="section-title-row">
             <h2>Latest Insights</h2>
-            <p>Written and video blogs managed from your admin dashboard.</p>
+            <p>Read the latest written and video blog insights.</p>
           </div>
           <div className="blog-filters">
             <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
@@ -142,25 +141,6 @@ const LandingPage = () => {
             ))}
           </div>
           {!topBlogs.length ? <p className="empty-state">No blogs match this filter.</p> : null}
-        </section>
-
-        <section id="jobs" className="content-section jobs-section">
-          <div className="section-title-row">
-            <h2>Open Roles</h2>
-            <p>Public job listings your client can update anytime.</p>
-          </div>
-          <div className="job-list">
-            {data.jobs.map((job) => (
-              <article key={job.id} className="job-item">
-                <h3>{job.title}</h3>
-                <p>{job.department} • {job.location}</p>
-                <p>{job.summary}</p>
-                <a href={job.apply_url} target="_blank" rel="noreferrer">
-                  Apply
-                </a>
-              </article>
-            ))}
-          </div>
         </section>
       </main>
     </div>

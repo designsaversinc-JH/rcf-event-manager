@@ -21,7 +21,6 @@ const AdminLayout = () => {
         <nav className="admin-nav">
           <NavLink to="/admin/dashboard">Dashboard</NavLink>
           <NavLink to="/admin/posts">Blogs</NavLink>
-          <NavLink to="/admin/jobs">Jobs</NavLink>
           <NavLink to="/admin/settings">Settings</NavLink>
         </nav>
         <div className="admin-user-panel">

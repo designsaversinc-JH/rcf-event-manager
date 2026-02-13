@@ -67,7 +67,7 @@ router.get('/dashboard', async (_req, res, next) => {
       totalTags: tags.rows[0].count,
       quickActions: [
         { label: 'Create Blog', href: '/admin/posts/new' },
-        { label: 'Post Job', href: '/admin/jobs/new' },
+        { label: 'Manage Blogs', href: '/admin/posts' },
         { label: 'Edit Navigation', href: '/admin/settings' },
       ],
     });
