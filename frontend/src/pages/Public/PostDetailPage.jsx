@@ -169,7 +169,7 @@ const PostDetailPage = () => {
 
   return (
     <div className="public-page compact-public">
-      <PublicBlogHeader />
+      <PublicBlogHeader settings={settings} />
       <article className="detail-page rich-detail">
         <div className="detail-main">
           <Link to="/all-blogs" className="detail-back">

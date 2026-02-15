@@ -80,6 +80,7 @@ router.get('/landing', async (_req, res, next) => {
            FROM blogs b
            LEFT JOIN blog_tags bt ON bt.blog_id = b.id
            LEFT JOIN tags t ON t.id = bt.tag_id
+           WHERE b.status = 'published'
            GROUP BY b.id
            ORDER BY b.publish_date DESC NULLS LAST, b.created_at DESC`,
           []
@@ -122,6 +123,7 @@ router.get('/blogs', async (_req, res, next) => {
        FROM blogs b
        LEFT JOIN blog_tags bt ON bt.blog_id = b.id
        LEFT JOIN tags t ON t.id = bt.tag_id
+       WHERE b.status = 'published'
        GROUP BY b.id
        ORDER BY b.publish_date DESC NULLS LAST, b.created_at DESC`,
       []
@@ -142,6 +144,7 @@ router.get('/blogs/:identifier', async (req, res, next) => {
        LEFT JOIN blog_tags bt ON bt.blog_id = b.id
        LEFT JOIN tags t ON t.id = bt.tag_id
        WHERE (b.id = $1 OR b.blog_url = $1)
+         AND b.status = 'published'
        GROUP BY b.id
        LIMIT 1`,
       [identifier]

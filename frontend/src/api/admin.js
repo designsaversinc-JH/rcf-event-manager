@@ -27,3 +27,11 @@ export const saveNavigation = (items) => apiClient.put('/admin/navigation', { it
 
 export const fetchSettings = () => apiClient.get('/admin/settings');
 export const saveSettings = (payload) => apiClient.put('/admin/settings', payload);
+
+export const fetchAdminUsers = () => apiClient.get('/admin/users');
+export const createAdminUser = (payload) => apiClient.post('/admin/users', payload);
+export const updateAdminUserRole = (id, role) =>
+  apiClient.patch(`/admin/users/${id}/role`, { role });
+export const updateAdminUserStatus = (id, isActive) =>
+  apiClient.patch(`/admin/users/${id}/status`, { isActive });
+export const deleteAdminUser = (id) => apiClient.delete(`/admin/users/${id}`);

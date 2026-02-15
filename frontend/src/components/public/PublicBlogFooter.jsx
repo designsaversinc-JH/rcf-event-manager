@@ -24,7 +24,11 @@ const PublicBlogFooter = ({ settings }) => {
     <footer className="public-footer">
       <div className="public-footer-inner">
         <a href={mainWebsiteUrl} target="_blank" rel="noreferrer" className="footer-brand-link">
-          <img src={LOGO_URL} alt="Envision Wealth Planning" className="footer-logo" />
+          <img
+            src={settings?.public_logo_url || LOGO_URL}
+            alt="Envision Wealth Planning"
+            className="footer-logo"
+          />
         </a>
 
         <nav className="footer-nav-links">

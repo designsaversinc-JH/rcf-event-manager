@@ -22,7 +22,7 @@ const authenticate = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const { rows } = await query(
-      'SELECT id, email, name, role FROM admin_users WHERE id = $1 LIMIT 1',
+      'SELECT id, email, name, role, is_active FROM admin_users WHERE id = $1 LIMIT 1',
       [decoded.id]
     );
 
@@ -30,6 +30,10 @@ const authenticate = async (req, res, next) => {
 
     if (!user) {
       return res.status(401).json({ message: 'User account not found.' });
+    }
+
+    if (user.is_active === false) {
+      return res.status(403).json({ message: 'Your account has been disabled.' });
     }
 
     req.user = user;

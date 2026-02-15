@@ -19,6 +19,7 @@ const BlogListSection = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTag, setSelectedTag] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [failedImages, setFailedImages] = useState({});
 
   const filtered = useMemo(() => {
@@ -42,13 +43,35 @@ const BlogListSection = ({
         return false;
       }
 
+      if (searchTerm.trim()) {
+        const query = searchTerm.trim().toLowerCase();
+        const text = [
+          blog.title,
+          blog.summary,
+          blog.category,
+          ...(blog.blogTags || []),
+        ]
+          .join(' ')
+          .toLowerCase();
+
+        if (!text.includes(query)) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [blogs, mode, selectedCategory, selectedTag]);
+  }, [blogs, mode, selectedCategory, selectedTag, searchTerm]);
 
   return (
     <section className="content-section compact-content">
       <div className="blog-filters compact-filters">
+        <input
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder="Search title, category, tags"
+        />
+
         <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
           <option value="all">All Categories</option>
           {categories.map((category) => (
@@ -66,6 +89,18 @@ const BlogListSection = ({
             </option>
           ))}
         </select>
+
+        <button
+          type="button"
+          className="filter-reset-btn"
+          onClick={() => {
+            setSearchTerm('');
+            setSelectedCategory('all');
+            setSelectedTag('all');
+          }}
+        >
+          Reset Filters
+        </button>
       </div>
 
       {!!filtered.length && (

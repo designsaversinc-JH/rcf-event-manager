@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
   name TEXT NOT NULL,
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'admin',
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS blogs (
   content TEXT,
   publish_date TIMESTAMPTZ,
   author TEXT,
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
+  status TEXT NOT NULL DEFAULT 'published' CHECK (status IN ('draft', 'pending_review', 'published', 'archived')),
   category TEXT,
   cover_img TEXT,
   blog_url TEXT UNIQUE,
@@ -88,6 +89,38 @@ CREATE TABLE IF NOT EXISTS blogs (
   vlog_embed TEXT,
   vlog_url TEXT
 );
+
+ALTER TABLE admin_users
+ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+
+ALTER TABLE site_settings
+ADD COLUMN IF NOT EXISTS admin_logo_url TEXT,
+ADD COLUMN IF NOT EXISTS public_logo_url TEXT;
+
+DO $$
+DECLARE
+  constraint_name text;
+BEGIN
+  SELECT conname INTO constraint_name
+  FROM pg_constraint
+  WHERE conrelid = 'blogs'::regclass
+    AND contype = 'c'
+    AND pg_get_constraintdef(oid) ILIKE '%status%'
+  LIMIT 1;
+
+  IF constraint_name IS NOT NULL AND constraint_name <> 'blogs_status_check' THEN
+    EXECUTE format('ALTER TABLE blogs DROP CONSTRAINT %I', constraint_name);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'blogs'::regclass AND conname = 'blogs_status_check'
+  ) THEN
+    ALTER TABLE blogs
+      ADD CONSTRAINT blogs_status_check
+      CHECK (status IN ('draft', 'pending_review', 'published', 'archived'));
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS blog_tags (
   blog_id TEXT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
@@ -154,7 +187,9 @@ INSERT INTO site_settings (
   primary_cta_href,
   secondary_cta_label,
   secondary_cta_href,
-  accent_message
+  accent_message,
+  admin_logo_url,
+  public_logo_url
 )
 VALUES (
   'default',
@@ -165,7 +200,9 @@ VALUES (
   '/#blogs',
   'For My Business',
   '/#jobs',
-  'Founder James Brewer wins 2025 ESG Investment Advisor of the Year!'
+  'Founder James Brewer wins 2025 ESG Investment Advisor of the Year!',
+  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png',
+  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png'
 )
 ON CONFLICT (id) DO NOTHING;
 

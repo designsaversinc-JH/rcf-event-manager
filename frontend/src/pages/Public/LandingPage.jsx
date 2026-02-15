@@ -27,7 +27,7 @@ const LandingPage = () => {
   }, []);
 
   const latest = useMemo(() => {
-    return [...(data.blogs || [])].slice(0, 6);
+    return [...(data.blogs || [])].slice(0, 4);
   }, [data.blogs]);
 
   if (loading) {
@@ -36,7 +36,7 @@ const LandingPage = () => {
 
   return (
     <div className="public-page compact-public">
-      <PublicBlogHeader />
+      <PublicBlogHeader settings={data.settings} />
 
       <section className="hero compact-hero">
         <div className="hero-content compact-hero-content">

@@ -84,7 +84,7 @@ router.post('/firebase-login', async (req, res, next) => {
     }
 
     const { rows } = await query(
-      `SELECT id, email, name, role, firebase_uid
+      `SELECT id, email, name, role, firebase_uid, is_active
        FROM admin_users
        WHERE lower(email) = lower($1)
        LIMIT 1`,
@@ -96,6 +96,10 @@ router.post('/firebase-login', async (req, res, next) => {
       return res
         .status(403)
         .json({ message: 'Your account is not allowed in this admin dashboard.' });
+    }
+
+    if (user.is_active === false) {
+      return res.status(403).json({ message: 'Your account has been disabled.' });
     }
 
     if (!user.firebase_uid && decoded.uid) {
@@ -156,7 +160,7 @@ router.post('/firebase-signup', async (req, res, next) => {
     const safeName = sanitizeName(requestedName, decoded.name || firebaseEmail);
 
     const existingResult = await query(
-      `SELECT id, email, name, role, firebase_uid
+      `SELECT id, email, name, role, firebase_uid, is_active
        FROM admin_users
        WHERE lower(email) = lower($1)
        LIMIT 1`,
@@ -176,7 +180,7 @@ router.post('/firebase-signup', async (req, res, next) => {
       );
 
       const refreshed = await query(
-        'SELECT id, email, name, role, firebase_uid FROM admin_users WHERE id = $1 LIMIT 1',
+        'SELECT id, email, name, role, firebase_uid, is_active FROM admin_users WHERE id = $1 LIMIT 1',
         [user.id]
       );
       user = refreshed.rows[0];
@@ -186,16 +190,20 @@ router.post('/firebase-signup', async (req, res, next) => {
       const role = 'admin';
 
       await query(
-        `INSERT INTO admin_users (id, email, firebase_uid, name, password_hash, role, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())`,
+        `INSERT INTO admin_users (id, email, firebase_uid, name, password_hash, role, is_active, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, TRUE, NOW(), NOW())`,
         [userId, firebaseEmail, decoded.uid || null, safeName, placeholderHash, role]
       );
 
       const created = await query(
-        'SELECT id, email, name, role, firebase_uid FROM admin_users WHERE id = $1 LIMIT 1',
+        'SELECT id, email, name, role, firebase_uid, is_active FROM admin_users WHERE id = $1 LIMIT 1',
         [userId]
       );
       user = created.rows[0];
+    }
+
+    if (user.is_active === false) {
+      return res.status(403).json({ message: 'Your account has been disabled.' });
     }
 
     const token = issueSessionToken(user);

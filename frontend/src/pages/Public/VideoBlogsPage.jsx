@@ -27,7 +27,7 @@ const VideoBlogsPage = () => {
 
   return (
     <div className="public-page compact-public">
-      <PublicBlogHeader />
+      <PublicBlogHeader settings={data.settings} />
       <section className="hero compact-hero small-hero">
         <div className="hero-content compact-hero-content">
           <h1>Video Blogs</h1>

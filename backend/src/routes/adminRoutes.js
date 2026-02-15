@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const { randomUUID } = require('crypto');
 const slugify = require('slugify');
 const { query } = require('../config/db');
@@ -9,6 +10,7 @@ const router = express.Router();
 router.use(authenticate, requireAdmin);
 
 const makeId = (prefix) => `${prefix}-${randomUUID().slice(0, 8)}`;
+const BLOG_STATUSES = new Set(['draft', 'pending_review', 'published', 'archived']);
 
 const toBlogResponse = (row) => ({
   id: row.id,
@@ -29,6 +31,14 @@ const toBlogResponse = (row) => ({
   vlogURL: row.vlog_url,
   blogTags: row.blog_tags || [],
 });
+
+const normalizeBlogStatus = (value, fallback = 'published') => {
+  const candidate = String(value || '').trim().toLowerCase();
+  if (BLOG_STATUSES.has(candidate)) {
+    return candidate;
+  }
+  return fallback;
+};
 
 const syncBlogTags = async (blogId, tagNamesInput = []) => {
   const tagNames = [...new Set((Array.isArray(tagNamesInput) ? tagNamesInput : []).map((name) => String(name).trim()).filter(Boolean))];
@@ -53,18 +63,86 @@ const syncBlogTags = async (blogId, tagNamesInput = []) => {
 
 router.get('/dashboard', async (_req, res, next) => {
   try {
-    const [blogs, jobs, categories, tags] = await Promise.all([
+    const [
+      blogs,
+      jobs,
+      categories,
+      tags,
+      statusBreakdown,
+      typeBreakdown,
+      recentPosts,
+      monthlyTrend,
+      latestPublishedAt,
+    ] = await Promise.all([
       query('SELECT COUNT(*)::int AS count FROM blogs', []),
       query('SELECT COUNT(*)::int AS count FROM jobs WHERE status = $1', ['open']),
       query('SELECT COUNT(*)::int AS count FROM categories', []),
       query('SELECT COUNT(*)::int AS count FROM tags', []),
+      query(
+        `SELECT status, COUNT(*)::int AS count
+         FROM blogs
+         GROUP BY status`,
+        []
+      ),
+      query(
+        `SELECT blog_type, COUNT(*)::int AS count
+         FROM blogs
+         GROUP BY blog_type`,
+        []
+      ),
+      query(
+        `SELECT id, title, status, blog_type, publish_date, updated_at
+         FROM blogs
+         ORDER BY updated_at DESC
+         LIMIT 5`,
+        []
+      ),
+      query(
+        `SELECT to_char(date_trunc('month', COALESCE(publish_date, created_at)), 'YYYY-MM') AS period,
+                COUNT(*)::int AS count
+         FROM blogs
+         WHERE COALESCE(publish_date, created_at) >= NOW() - interval '6 months'
+         GROUP BY period
+         ORDER BY period ASC`,
+        []
+      ),
+      query(
+        `SELECT publish_date
+         FROM blogs
+         WHERE status = 'published'
+         ORDER BY publish_date DESC NULLS LAST
+         LIMIT 1`,
+        []
+      ),
     ]);
+
+    const mapCounts = (rows, key) =>
+      rows.reduce((acc, row) => ({ ...acc, [row[key]]: Number(row.count) }), {});
+
+    const byStatus = {
+      draft: 0,
+      pending_review: 0,
+      published: 0,
+      archived: 0,
+      ...mapCounts(statusBreakdown.rows, 'status'),
+    };
+
+    const byType = {
+      written: 0,
+      video: 0,
+      ...mapCounts(typeBreakdown.rows, 'blog_type'),
+    };
 
     res.status(200).json({
       totalBlogs: blogs.rows[0].count,
       openJobs: jobs.rows[0].count,
       totalCategories: categories.rows[0].count,
       totalTags: tags.rows[0].count,
+      byStatus,
+      byType,
+      trend: monthlyTrend.rows,
+      recentPosts: recentPosts.rows,
+      latestPublishedAt: latestPublishedAt.rows[0]?.publish_date || null,
       quickActions: [
         { label: 'Create Blog', href: '/admin/posts/new' },
         { label: 'Manage Blogs', href: '/admin/posts' },
@@ -141,7 +219,7 @@ router.post('/blogs', async (req, res, next) => {
     }
 
     const id = makeId('blog');
-    const normalizedStatus = status === 'published' ? 'published' : 'draft';
+    const normalizedStatus = normalizeBlogStatus(status, 'published');
     const normalizedType = blogType === 'video' ? 'video' : 'written';
     const slug = (blogURL || slugify(title, { lower: true, strict: true })).slice(0, 120);
 
@@ -239,7 +317,7 @@ router.put('/blogs/:id', async (req, res, next) => {
         content || null,
         publishDate || null,
         author || req.user.name,
-        status === 'published' ? 'published' : 'draft',
+        normalizeBlogStatus(status, 'published'),
         category || null,
         coverImg || null,
         slug,
@@ -552,6 +630,8 @@ router.put('/settings', async (req, res, next) => {
       secondaryCtaLabel,
       secondaryCtaHref,
       accentMessage,
+      adminLogoUrl,
+      publicLogoUrl,
     } = req.body || {};
 
     await query(
@@ -564,8 +644,10 @@ router.put('/settings', async (req, res, next) => {
            secondary_cta_label = $6,
            secondary_cta_href = $7,
            accent_message = $8,
+           admin_logo_url = $9,
+           public_logo_url = $10,
            updated_at = NOW()
-       WHERE id = $9`,
+       WHERE id = $11`,
       [
         siteTitle,
         heroTitle,
@@ -575,12 +657,129 @@ router.put('/settings', async (req, res, next) => {
         secondaryCtaLabel,
         secondaryCtaHref,
         accentMessage,
+        adminLogoUrl || null,
+        publicLogoUrl || null,
         'default',
       ]
     );
 
     const updated = await query('SELECT * FROM site_settings WHERE id = $1 LIMIT 1', ['default']);
     return res.status(200).json(updated.rows[0]);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/users', async (_req, res, next) => {
+  try {
+    const { rows } = await query(
+      `SELECT id, email, name, role, is_active, created_at, updated_at
+       FROM admin_users
+       ORDER BY created_at DESC`,
+      []
+    );
+    return res.status(200).json(rows);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/users', async (req, res, next) => {
+  try {
+    const { email, name, role = 'editor', password } = req.body || {};
+    if (!email || !name) {
+      return res.status(400).json({ message: 'Name and email are required.' });
+    }
+
+    const normalizedRole = ['admin', 'editor', 'author', 'viewer'].includes(role)
+      ? role
+      : 'viewer';
+    const id = makeId('admin');
+    const passwordHash = await bcrypt.hash(
+      password || `Temp-${randomUUID().slice(0, 10)}`,
+      10
+    );
+
+    await query(
+      `INSERT INTO admin_users (id, email, name, password_hash, role, is_active, created_at, updated_at)
+       VALUES ($1, lower($2), $3, $4, $5, TRUE, NOW(), NOW())`,
+      [id, email, name, passwordHash, normalizedRole]
+    );
+
+    const created = await query(
+      `SELECT id, email, name, role, is_active, created_at, updated_at
+       FROM admin_users
+       WHERE id = $1
+       LIMIT 1`,
+      [id]
+    );
+    return res.status(201).json(created.rows[0]);
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ message: 'User already exists with that email.' });
+    }
+    return next(error);
+  }
+});
+
+router.patch('/users/:id/role', async (req, res, next) => {
+  try {
+    const { role } = req.body || {};
+    const normalizedRole = ['admin', 'editor', 'author', 'viewer'].includes(role)
+      ? role
+      : null;
+    if (!normalizedRole) {
+      return res.status(400).json({ message: 'A valid role is required.' });
+    }
+
+    const result = await query(
+      `UPDATE admin_users
+       SET role = $1, updated_at = NOW()
+       WHERE id = $2
+       RETURNING id, email, name, role, is_active, created_at, updated_at`,
+      [normalizedRole, req.params.id]
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    return res.status(200).json(result.rows[0]);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.patch('/users/:id/status', async (req, res, next) => {
+  try {
+    const { isActive } = req.body || {};
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ message: 'isActive boolean is required.' });
+    }
+
+    const result = await query(
+      `UPDATE admin_users
+       SET is_active = $1, updated_at = NOW()
+       WHERE id = $2
+       RETURNING id, email, name, role, is_active, created_at, updated_at`,
+      [isActive, req.params.id]
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    return res.status(200).json(result.rows[0]);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete('/users/:id', async (req, res, next) => {
+  try {
+    const result = await query('DELETE FROM admin_users WHERE id = $1', [req.params.id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    return res.status(204).send();
   } catch (error) {
     return next(error);
   }
