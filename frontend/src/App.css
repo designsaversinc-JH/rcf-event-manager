@@ -901,12 +901,41 @@ td {
   gap: 0.4rem;
 }
 
+.settings-help {
+  margin: 0;
+  color: #556878;
+  font-size: 0.9rem;
+}
+
 .nav-editor-row,
 .simple-row {
   display: flex;
   gap: 0.4rem;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.route-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.route-chip {
+  border: 1px solid #c9d8e5;
+  background: #f6fbff;
+  color: #225272;
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.route-chip-active {
+  background: #0f86b7;
+  border-color: #0f86b7;
+  color: #fff;
 }
 
 .not-found {

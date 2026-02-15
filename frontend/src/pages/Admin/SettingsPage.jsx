@@ -13,6 +13,16 @@ import {
   updateCategory,
 } from '../../api/admin';
 
+const INTERNAL_ROUTE_CHOICES = [
+  { label: 'Blogs Home', href: '/' },
+  { label: 'All Blogs', href: '/all-blogs' },
+  { label: 'Video Blogs', href: '/video-blogs' },
+  { label: 'Admin Dashboard', href: '/admin/dashboard' },
+  { label: 'Manage Blogs', href: '/admin/posts' },
+  { label: 'Create Blog', href: '/admin/posts/new' },
+  { label: 'Settings', href: '/admin/settings' },
+];
+
 const SettingsPage = () => {
   const [settings, setSettings] = useState(null);
   const [navigation, setNavigation] = useState([]);
@@ -89,6 +99,9 @@ const SettingsPage = () => {
 
       <article>
         <h2>Navigation</h2>
+        <p className="settings-help">
+          Use quick route chips for internal pages, or type any custom URL.
+        </p>
         <div className="stack-list">
           {navigation.map((item, index) => (
             <div className="nav-editor-row" key={item.id || index}>
@@ -102,12 +115,32 @@ const SettingsPage = () => {
               />
               <input
                 value={item.href}
+                placeholder="/all-blogs or https://example.com/page"
                 onChange={(e) => {
                   const next = [...navigation];
                   next[index] = { ...item, href: e.target.value };
                   setNavigation(next);
                 }}
               />
+              <div className="route-chip-row">
+                {INTERNAL_ROUTE_CHOICES.map((choice) => {
+                  const isSelected = item.href === choice.href;
+                  return (
+                    <button
+                      key={`${item.id || index}-${choice.href}`}
+                      type="button"
+                      className={`route-chip ${isSelected ? 'route-chip-active' : ''}`}
+                      onClick={() => {
+                        const next = [...navigation];
+                        next[index] = { ...item, href: choice.href };
+                        setNavigation(next);
+                      }}
+                    >
+                      {choice.label}
+                    </button>
+                  );
+                })}
+              </div>
               <label>
                 <input
                   type="checkbox"
