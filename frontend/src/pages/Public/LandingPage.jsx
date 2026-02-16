@@ -45,11 +45,8 @@ const LandingPage = () => {
 
       <section className="hero compact-hero">
         <div className="hero-content compact-hero-content">
-          <h1>Envision&apos;s Blog Articals</h1>
-          <p>
-            Discover personalized approaches to managing your finances, ensuring peace of mind
-            and lasting prosperity
-          </p>
+          <h1>{data.settings?.hero_title || 'Welcome to Envision Blogs'}</h1>
+          <p>{data.settings?.hero_subtitle || 'Tool and strategies modern teams need to help their companies grow.'}</p>
         </div>
       </section>
 

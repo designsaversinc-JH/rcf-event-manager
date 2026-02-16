@@ -42,6 +42,8 @@ const AllBlogsPage = () => {
           tags={data.tags || []}
           mode="all"
           staggered
+          paginated
+          pageSize={9}
         />
       </main>
 

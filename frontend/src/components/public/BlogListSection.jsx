@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import EmptyList from './EmptyList';
 
@@ -16,11 +16,14 @@ const BlogListSection = ({
   tags = [],
   mode = 'all',
   staggered = false,
+  paginated = false,
+  pageSize = 9,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTag, setSelectedTag] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [failedImages, setFailedImages] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filtered = useMemo(() => {
     return blogs.filter((blog) => {
@@ -63,6 +66,25 @@ const BlogListSection = ({
     });
   }, [blogs, mode, selectedCategory, selectedTag, searchTerm]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const visibleBlogs = useMemo(() => {
+    if (!paginated) {
+      return filtered;
+    }
+    const start = (currentPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, paginated, currentPage, pageSize]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedTag, mode, blogs, paginated]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   return (
     <section className="content-section compact-content">
       <div className="blog-filters compact-filters">
@@ -97,15 +119,16 @@ const BlogListSection = ({
             setSearchTerm('');
             setSelectedCategory('all');
             setSelectedTag('all');
+            setCurrentPage(1);
           }}
         >
           Reset Filters
         </button>
       </div>
 
-      {!!filtered.length && (
+      {!!visibleBlogs.length && (
         <div className={`blog-grid compact-grid ${staggered ? 'stagger-grid' : ''}`}>
-          {filtered.map((blog, index) => {
+          {visibleBlogs.map((blog, index) => {
             const isVideo = String(blog.blogType || '').toLowerCase() === 'video';
             const resolvedImage = blog.coverImg || (isVideo ? VIDEO_PLACEHOLDER_URL : null);
             const hasImage = Boolean(resolvedImage) && !failedImages[blog.id];
@@ -156,6 +179,30 @@ const BlogListSection = ({
           title="No blogs available"
           description="No items match your filters right now. Try another category or tag."
         />
+      ) : null}
+
+      {paginated && totalPages > 1 ? (
+        <div className="public-pagination">
+          <button
+            type="button"
+            className="mode-switch"
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            className="mode-switch"
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       ) : null}
     </section>
   );
