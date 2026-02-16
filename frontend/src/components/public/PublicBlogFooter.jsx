@@ -3,24 +3,11 @@ import { Link } from 'react-router-dom';
 
 const LOGO_URL =
   'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png';
-
-const normalizeMainSite = (raw) => {
-  const value = String(raw || '').trim();
-  if (!value || value.startsWith('/')) {
-    return 'https://envisionwealthplanning.com';
-  }
-
-  if (value.startsWith('http://') || value.startsWith('https://')) {
-    return value;
-  }
-
-  return `https://${value}`;
-};
+const MAIN_SITE_URL = 'https://envisionwealth.us/';
 
 const isInternalHref = (href) => String(href || '').trim().startsWith('/');
 
 const PublicBlogFooter = ({ settings, navigation = [] }) => {
-  const mainWebsiteUrl = normalizeMainSite(settings?.primary_cta_href);
   const footerLinks = (Array.isArray(navigation) ? navigation : [])
     .filter((item) => item && item.visible !== false && String(item.label || '').trim())
     .map((item) => ({
@@ -51,7 +38,7 @@ const PublicBlogFooter = ({ settings, navigation = [] }) => {
   return (
     <footer className="public-footer">
       <div className="public-footer-inner">
-        <a href={mainWebsiteUrl} target="_blank" rel="noreferrer" className="footer-brand-link">
+        <a href={MAIN_SITE_URL} target="_blank" rel="noreferrer" className="footer-brand-link">
           <img
             src={settings?.public_logo_url || LOGO_URL}
             alt="Envision Wealth Planning"
