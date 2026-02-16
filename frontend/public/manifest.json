@@ -3,24 +3,14 @@
   "name": "Create React App Sample",
   "icons": [
     {
-      "src": "favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "64x64"
+      "src": "https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg",
+      "type": "image/jpeg",
+      "sizes": "64x64 192x192 512x512"
     },
     {
-      "src": "logo192.png",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/png"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg",
+      "type": "image/jpeg",
+      "sizes": "32x32 24x24 16x16"
     }
   ],
   "start_url": ".",
