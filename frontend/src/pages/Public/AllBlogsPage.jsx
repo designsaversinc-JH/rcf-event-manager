@@ -3,10 +3,19 @@ import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import BlogListSection from '../../components/public/BlogListSection';
 import { fetchLanding } from '../../api/public';
+import { getPageContent } from '../../utils/pageContent';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const AllBlogsPage = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ blogs: [], categories: [], tags: [], settings: null });
+  const pageContent = getPageContent(data.settings, 'all_blogs');
+
+  usePageMeta({
+    title: pageContent.meta_title || `${data.settings?.site_title || 'Envision Wealth Planning'} | All Blogs`,
+    description: pageContent.meta_description,
+    canonicalUrl: pageContent.canonical_url,
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -30,8 +39,8 @@ const AllBlogsPage = () => {
       <PublicBlogHeader settings={data.settings} />
       <section className="hero compact-hero small-hero">
         <div className="hero-content compact-hero-content">
-          <h1>All Blogs</h1>
-          <p>Staggered feed of article and video cards.</p>
+          <h1>{pageContent.title || 'All Blogs'}</h1>
+          <p>{pageContent.subtext || 'Staggered feed of article and video cards.'}</p>
         </div>
       </section>
 

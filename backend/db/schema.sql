@@ -93,10 +93,6 @@ CREATE TABLE IF NOT EXISTS blogs (
 ALTER TABLE admin_users
 ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
 
-ALTER TABLE site_settings
-ADD COLUMN IF NOT EXISTS admin_logo_url TEXT,
-ADD COLUMN IF NOT EXISTS public_logo_url TEXT;
-
 DO $$
 DECLARE
   constraint_name text;
@@ -161,9 +157,21 @@ CREATE TABLE IF NOT EXISTS site_settings (
   secondary_cta_label TEXT NOT NULL DEFAULT 'For My Business',
   secondary_cta_href TEXT NOT NULL DEFAULT '/#jobs',
   accent_message TEXT NOT NULL DEFAULT 'Latest market insights and hiring updates.',
+  admin_logo_url TEXT,
+  public_logo_url TEXT,
+  page_content JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE site_settings
+ADD COLUMN IF NOT EXISTS admin_logo_url TEXT,
+ADD COLUMN IF NOT EXISTS public_logo_url TEXT,
+ADD COLUMN IF NOT EXISTS page_content JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+UPDATE site_settings
+SET page_content = '{}'::jsonb
+WHERE page_content IS NULL;
 
 CREATE INDEX IF NOT EXISTS idx_blogs_status_publish_date ON blogs(status, publish_date DESC);
 CREATE INDEX IF NOT EXISTS idx_jobs_status_publish_date ON jobs(status, publish_date DESC);

@@ -17,6 +17,7 @@ import {
   updateAdminUserStatus,
   updateCategory,
 } from '../../api/admin';
+import { getAllPageContent, getPageContent } from '../../utils/pageContent';
 
 const INTERNAL_ROUTE_CHOICES = [
   { label: 'Blogs Home', href: '/' },
@@ -30,10 +31,35 @@ const INTERNAL_ROUTE_CHOICES = [
 
 const TABS = [
   { id: 'general', label: 'App Settings' },
+  { id: 'pages', label: 'Page Content & SEO' },
   { id: 'branding', label: 'Branding' },
   { id: 'navigation', label: 'Navigation' },
   { id: 'taxonomy', label: 'Categories & Tags' },
   { id: 'team', label: 'Team & Access' },
+];
+
+const PAGE_CONFIGS = [
+  {
+    key: 'landing',
+    label: 'Landing Page',
+    route: '/',
+    description: 'Main homepage hero and featured posts section.',
+    showSectionFields: true,
+  },
+  {
+    key: 'all_blogs',
+    label: 'All Blogs Page',
+    route: '/all-blogs',
+    description: 'Header and metadata for the all blogs listing page.',
+    showSectionFields: false,
+  },
+  {
+    key: 'video_blogs',
+    label: 'Video Blogs Page',
+    route: '/video-blogs',
+    description: 'Header and metadata for the video blogs page.',
+    showSectionFields: false,
+  },
 ];
 
 const defaultInvite = {
@@ -63,7 +89,11 @@ const SettingsPage = () => {
       fetchTags(),
       fetchAdminUsers(),
     ]);
-    setSettings(settingsRes.data || null);
+    const nextSettings = settingsRes.data || null;
+    if (nextSettings) {
+      nextSettings.page_content = getAllPageContent(nextSettings);
+    }
+    setSettings(nextSettings);
     setNavigation(navRes.data || []);
     setCategories(catRes.data || []);
     setTags(tagRes.data || []);
@@ -93,6 +123,7 @@ const SettingsPage = () => {
         accentMessage: settings.accent_message,
         adminLogoUrl: settings.admin_logo_url,
         publicLogoUrl: settings.public_logo_url,
+        pageContent: getAllPageContent(settings),
       });
       await load();
     } finally {
@@ -259,6 +290,132 @@ const SettingsPage = () => {
       <div className="settings-actions">
         <button type="submit" disabled={saving}>
           {saving ? 'Saving...' : 'Save Branding'}
+        </button>
+      </div>
+    </form>
+  );
+
+  const setPageField = (pageKey, fieldKey, value) => {
+    setSettings((prev) => {
+      if (!prev) return prev;
+      const currentPageContent = getAllPageContent(prev);
+      return {
+        ...prev,
+        page_content: {
+          ...currentPageContent,
+          [pageKey]: {
+            ...currentPageContent[pageKey],
+            [fieldKey]: value,
+          },
+        },
+      };
+    });
+  };
+
+  const renderPageContentTab = () => (
+    <form className="settings-pane-card" onSubmit={onSettingsSave}>
+      <h3>Page Content & SEO</h3>
+      <p className="settings-help">Manage per-page title, subtext, metadata, and canonical URL.</p>
+
+      <div className="stack-list">
+        {PAGE_CONFIGS.map((pageConfig) => {
+          const pageData = getPageContent(settings, pageConfig.key);
+          return (
+            <div className="settings-subcard" key={pageConfig.key}>
+              <h4>{pageConfig.label}</h4>
+              <p className="settings-help">{pageConfig.description} Route: {pageConfig.route}</p>
+
+              <div className="settings-row settings-row-stacked">
+                <div>
+                  <strong>Title</strong>
+                  <p>Main heading shown on the page.</p>
+                </div>
+                <input
+                  value={pageData.title || ''}
+                  onChange={(e) => setPageField(pageConfig.key, 'title', e.target.value)}
+                />
+              </div>
+
+              <div className="settings-row settings-row-stacked">
+                <div>
+                  <strong>Subtext</strong>
+                  <p>Supporting copy under the main title.</p>
+                </div>
+                <textarea
+                  rows={3}
+                  value={pageData.subtext || ''}
+                  onChange={(e) => setPageField(pageConfig.key, 'subtext', e.target.value)}
+                />
+              </div>
+
+              {pageConfig.showSectionFields ? (
+                <>
+                  <div className="settings-row settings-row-stacked">
+                    <div>
+                      <strong>Section Title</strong>
+                      <p>Title for the featured content block.</p>
+                    </div>
+                    <input
+                      value={pageData.section_title || ''}
+                      onChange={(e) => setPageField(pageConfig.key, 'section_title', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="settings-row settings-row-stacked">
+                    <div>
+                      <strong>Section Subtext</strong>
+                      <p>Supporting copy for the featured content block.</p>
+                    </div>
+                    <textarea
+                      rows={2}
+                      value={pageData.section_subtext || ''}
+                      onChange={(e) => setPageField(pageConfig.key, 'section_subtext', e.target.value)}
+                    />
+                  </div>
+                </>
+              ) : null}
+
+              <div className="settings-row settings-row-stacked">
+                <div>
+                  <strong>Meta Title</strong>
+                  <p>Browser title and search result headline.</p>
+                </div>
+                <input
+                  value={pageData.meta_title || ''}
+                  onChange={(e) => setPageField(pageConfig.key, 'meta_title', e.target.value)}
+                />
+              </div>
+
+              <div className="settings-row settings-row-stacked">
+                <div>
+                  <strong>Meta Description</strong>
+                  <p>Search snippet description.</p>
+                </div>
+                <textarea
+                  rows={3}
+                  value={pageData.meta_description || ''}
+                  onChange={(e) => setPageField(pageConfig.key, 'meta_description', e.target.value)}
+                />
+              </div>
+
+              <div className="settings-row settings-row-stacked">
+                <div>
+                  <strong>Canonical URL</strong>
+                  <p>Use an absolute URL or a route path (example: /all-blogs).</p>
+                </div>
+                <input
+                  value={pageData.canonical_url || ''}
+                  onChange={(e) => setPageField(pageConfig.key, 'canonical_url', e.target.value)}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="settings-actions">
+        <button type="submit" disabled={saving}>
+          {saving ? 'Saving...' : 'Save Page Content & SEO'}
         </button>
       </div>
     </form>
@@ -595,6 +752,7 @@ const SettingsPage = () => {
 
   const renderActiveTab = () => {
     if (activeTab === 'general') return renderGeneralTab();
+    if (activeTab === 'pages') return renderPageContentTab();
     if (activeTab === 'branding') return renderBrandingTab();
     if (activeTab === 'navigation') return renderNavigationTab();
     if (activeTab === 'taxonomy') return renderTaxonomyTab();

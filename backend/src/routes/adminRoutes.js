@@ -4,6 +4,7 @@ const { randomUUID } = require('crypto');
 const slugify = require('slugify');
 const { query } = require('../config/db');
 const { authenticate, requireAdmin } = require('../middleware/auth');
+const { normalizePageContent } = require('../utils/pageContentDefaults');
 
 const router = express.Router();
 
@@ -613,9 +614,17 @@ router.put('/navigation', async (req, res, next) => {
 router.get('/settings', async (_req, res, next) => {
   try {
     const settings = await query('SELECT * FROM site_settings WHERE id = $1 LIMIT 1', ['default']);
-    res.status(200).json(settings.rows[0] || null);
+    const current = settings.rows[0];
+    if (!current) {
+      return res.status(200).json(null);
+    }
+
+    return res.status(200).json({
+      ...current,
+      page_content: normalizePageContent(current.page_content),
+    });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -632,7 +641,10 @@ router.put('/settings', async (req, res, next) => {
       accentMessage,
       adminLogoUrl,
       publicLogoUrl,
+      pageContent,
     } = req.body || {};
+
+    const normalizedPageContent = normalizePageContent(pageContent);
 
     await query(
       `UPDATE site_settings
@@ -646,8 +658,9 @@ router.put('/settings', async (req, res, next) => {
            accent_message = $8,
            admin_logo_url = $9,
            public_logo_url = $10,
+           page_content = $11::jsonb,
            updated_at = NOW()
-       WHERE id = $11`,
+       WHERE id = $12`,
       [
         siteTitle,
         heroTitle,
@@ -659,12 +672,16 @@ router.put('/settings', async (req, res, next) => {
         accentMessage,
         adminLogoUrl || null,
         publicLogoUrl || null,
+        JSON.stringify(normalizedPageContent),
         'default',
       ]
     );
 
     const updated = await query('SELECT * FROM site_settings WHERE id = $1 LIMIT 1', ['default']);
-    return res.status(200).json(updated.rows[0]);
+    return res.status(200).json({
+      ...updated.rows[0],
+      page_content: normalizePageContent(updated.rows[0]?.page_content),
+    });
   } catch (error) {
     return next(error);
   }

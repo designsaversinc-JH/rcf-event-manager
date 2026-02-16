@@ -1,6 +1,7 @@
 const express = require('express');
 const { query } = require('../config/db');
 const { getFirestoreDb, isFirebaseAdminConfigured } = require('../config/firebaseAdmin');
+const { normalizePageContent } = require('../utils/pageContentDefaults');
 
 const router = express.Router();
 
@@ -104,7 +105,12 @@ router.get('/landing', async (_req, res, next) => {
     }
 
     res.status(200).json({
-      settings: settingsResult.rows[0] || null,
+      settings: settingsResult.rows[0]
+        ? {
+            ...settingsResult.rows[0],
+            page_content: normalizePageContent(settingsResult.rows[0].page_content),
+          }
+        : null,
       navigation: navResult.rows,
       blogs: blogsResult.rows.map(mapBlog),
       jobs: jobsResult.rows,
