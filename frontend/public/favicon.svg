@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Envision mark">
+  <rect width="64" height="64" rx="8" fill="#ffffff"/>
+
+  <polygon points="12,16 52,16 44,20 4,20" fill="#17a3d8"/>
+  <polygon points="4,20 44,20 44,28 4,28" fill="#0e86b9"/>
+  <polygon points="52,16 52,24 44,28 44,20" fill="#0a6f97"/>
+
+  <polygon points="12,28 52,28 44,32 4,32" fill="#efe1bf"/>
+  <polygon points="4,32 44,32 44,40 4,40" fill="#d8c79d"/>
+  <polygon points="52,28 52,36 44,40 44,32" fill="#bea97d"/>
+
+  <polygon points="12,40 52,40 44,44 4,44" fill="#98573f"/>
+  <polygon points="4,44 44,44 44,52 4,52" fill="#784232"/>
+  <polygon points="52,40 52,48 44,52 44,44" fill="#5c3024"/>
+</svg>
