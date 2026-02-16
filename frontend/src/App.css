@@ -848,6 +848,12 @@ button:disabled,
   gap: 0.5rem;
 }
 
+.admin-user-panel p {
+  margin: 0;
+  font-weight: 700;
+  color: #e8f4fb;
+}
+
 .admin-main {
   padding: 1.6rem 1.6rem 2rem;
   background: #eef4f9;
@@ -1538,6 +1544,29 @@ td {
   color: #405769;
 }
 
+.profile-card {
+  background: #fff;
+  border: 1px solid #d8e4ec;
+  border-radius: 12px;
+  padding: 0.95rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 0.7rem;
+}
+
+.profile-grid label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #334d61;
+  margin-bottom: 0.25rem;
+}
+
 .not-found {
   min-height: 80vh;
   display: grid;
@@ -1553,12 +1582,53 @@ td {
     position: sticky;
     top: 0;
     z-index: 4;
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(160px, auto) 1fr auto;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 0.75rem;
   }
 
   .admin-nav {
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(5, auto);
     overflow: auto;
+    white-space: nowrap;
+    gap: 0.25rem;
+  }
+
+  .admin-nav a {
+    padding: 0.38rem 0.58rem;
+    border-radius: 999px;
+    background: #0d334a;
+  }
+
+  .admin-user-panel {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .admin-user-panel p {
+    font-size: 0.82rem;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .brand-block {
+    min-height: auto;
+    gap: 0.1rem;
+  }
+
+  .admin-sidebar-logo {
+    width: 130px;
+    margin-top: 0;
+  }
+
+  .admin-main {
+    padding: 0.95rem 0.8rem 1.2rem;
   }
 
   .settings-shell {
@@ -1637,6 +1707,27 @@ td {
 
   .dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-kicker {
+    display: none;
+  }
+
+  .page-title-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  th,
+  td {
+    padding: 0.62rem 0.5rem;
+    font-size: 0.85rem;
   }
 }
 

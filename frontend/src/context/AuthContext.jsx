@@ -14,6 +14,7 @@ export const AuthContext = createContext({
   token: null,
   loading: true,
   login: async () => {},
+  setUserProfile: () => {},
   logout: async () => {},
 });
 
@@ -91,15 +92,21 @@ export const AuthProvider = ({ children }) => {
     applyAuth(null, null);
   }, [applyAuth]);
 
+  const setUserProfile = useCallback((profile) => {
+    if (!profile) return;
+    setUser((prev) => ({ ...(prev || {}), ...profile }));
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
       token,
       loading,
       login,
+      setUserProfile,
       logout,
     }),
-    [user, token, loading, login, logout]
+    [user, token, loading, login, setUserProfile, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

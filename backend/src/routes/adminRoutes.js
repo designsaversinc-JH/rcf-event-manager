@@ -67,6 +67,96 @@ router.get('/help', async (_req, res) => {
   return res.status(200).json(getHelpContent());
 });
 
+router.get('/profile', async (req, res, next) => {
+  try {
+    const { rows } = await query(
+      `SELECT id, email, name, role, is_active, created_at, updated_at
+       FROM admin_users
+       WHERE id = $1
+       LIMIT 1`,
+      [req.user.id]
+    );
+
+    if (!rows[0]) {
+      return res.status(404).json({ message: 'Profile not found.' });
+    }
+
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.put('/profile', async (req, res, next) => {
+  try {
+    const { name, currentPassword, newPassword } = req.body || {};
+    const nextName = String(name || '').trim();
+    const nextPassword = String(newPassword || '').trim();
+
+    if (!nextName && !nextPassword) {
+      return res
+        .status(400)
+        .json({ message: 'Provide a name and/or a new password to update your profile.' });
+    }
+
+    const currentUserResult = await query(
+      `SELECT id, name, password_hash
+       FROM admin_users
+       WHERE id = $1
+       LIMIT 1`,
+      [req.user.id]
+    );
+
+    const currentUser = currentUserResult.rows[0];
+    if (!currentUser) {
+      return res.status(404).json({ message: 'Profile not found.' });
+    }
+
+    let passwordHash = null;
+    if (nextPassword) {
+      if (nextPassword.length < 8) {
+        return res
+          .status(400)
+          .json({ message: 'New password must be at least 8 characters.' });
+      }
+
+      if (!currentPassword) {
+        return res
+          .status(400)
+          .json({ message: 'Current password is required to set a new password.' });
+      }
+
+      const passwordMatches = await bcrypt.compare(String(currentPassword), currentUser.password_hash);
+      if (!passwordMatches) {
+        return res.status(401).json({ message: 'Current password is incorrect.' });
+      }
+
+      passwordHash = await bcrypt.hash(nextPassword, 10);
+    }
+
+    await query(
+      `UPDATE admin_users
+       SET name = $1,
+           password_hash = COALESCE($2, password_hash),
+           updated_at = NOW()
+       WHERE id = $3`,
+      [nextName || currentUser.name, passwordHash, req.user.id]
+    );
+
+    const updatedResult = await query(
+      `SELECT id, email, name, role, is_active, created_at, updated_at
+       FROM admin_users
+       WHERE id = $1
+       LIMIT 1`,
+      [req.user.id]
+    );
+
+    return res.status(200).json(updatedResult.rows[0]);
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.get('/dashboard', async (_req, res, next) => {
   try {
     const [

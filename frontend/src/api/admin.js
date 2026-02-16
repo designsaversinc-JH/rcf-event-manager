@@ -1,6 +1,8 @@
 import apiClient from './client';
 
 export const fetchDashboard = () => apiClient.get('/admin/dashboard');
+export const fetchProfile = () => apiClient.get('/admin/profile');
+export const saveProfile = (payload) => apiClient.put('/admin/profile', payload);
 
 export const fetchAdminBlogs = () => apiClient.get('/admin/blogs');
 export const fetchAdminBlog = (id) => apiClient.get(`/admin/blogs/${id}`);

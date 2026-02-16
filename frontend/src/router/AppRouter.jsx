@@ -15,6 +15,7 @@ import PostViewPage from '../pages/Admin/PostViewPage';
 import JobsPage from '../pages/Admin/JobsPage';
 import SettingsPage from '../pages/Admin/SettingsPage';
 import HelpPage from '../pages/Admin/HelpPage';
+import ProfilePage from '../pages/Admin/ProfilePage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 const AppRouter = () => (
@@ -43,6 +44,7 @@ const AppRouter = () => (
       <Route path="posts/:id/view" element={<PostViewPage />} />
       <Route path="posts/:id/edit" element={<PostEditorPage />} />
       <Route path="jobs" element={<JobsPage />} />
+      <Route path="profile" element={<ProfilePage />} />
       <Route path="settings" element={<SettingsPage />} />
       <Route path="help" element={<HelpPage />} />
     </Route>
