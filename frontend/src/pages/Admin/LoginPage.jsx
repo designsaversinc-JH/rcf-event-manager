@@ -46,7 +46,7 @@ const LoginPage = () => {
 
   return (
     <div className="public-page compact-public">
-      <PublicBlogHeader settings={settings} />
+      <PublicBlogHeader settings={settings} navigation={navigation} />
       <div className="login-shell">
         <form className="login-card" onSubmit={onSubmit}>
           <p className="brand-kicker">Client Admin</p>

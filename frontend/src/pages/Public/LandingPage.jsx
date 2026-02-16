@@ -51,7 +51,7 @@ const LandingPage = () => {
 
   return (
     <div className="public-page compact-public">
-      <PublicBlogHeader settings={data.settings} />
+      <PublicBlogHeader settings={data.settings} navigation={data.navigation || []} />
 
       <section className="hero compact-hero">
         <div className="hero-content compact-hero-content">

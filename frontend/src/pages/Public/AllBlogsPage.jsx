@@ -36,7 +36,7 @@ const AllBlogsPage = () => {
 
   return (
     <div className="public-page compact-public">
-      <PublicBlogHeader settings={data.settings} />
+      <PublicBlogHeader settings={data.settings} navigation={data.navigation || []} />
       <section className="hero compact-hero small-hero">
         <div className="hero-content compact-hero-content">
           <h1>{pageContent.title || 'All Blogs'}</h1>

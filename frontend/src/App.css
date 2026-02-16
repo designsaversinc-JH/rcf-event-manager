@@ -1363,6 +1363,70 @@ td {
   background: #fdfefe;
 }
 
+.compact-taxonomy-card {
+  gap: 0.45rem;
+  padding: 0.6rem;
+  background: #fff;
+}
+
+.compact-taxonomy-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.compact-taxonomy-head span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #416176;
+  background: #eef6fc;
+  border: 1px solid #d5e6f4;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+
+.compact-taxonomy-list {
+  display: grid;
+  gap: 0.35rem;
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 0.1rem;
+}
+
+.compact-taxonomy-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.compact-taxonomy-row-static {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.compact-taxonomy-row span {
+  font-size: 0.9rem;
+  color: #2a4558;
+}
+
+.compact-taxonomy-row input {
+  min-width: 0;
+}
+
+.compact-taxonomy-create {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.compact-ghost-btn {
+  background: #f5fafc;
+  color: #2f5268;
+  border: 1px solid #d5e5f0;
+}
+
 .settings-nav-card {
   border: 1px solid #e3edf4;
   border-radius: 10px;

@@ -4,26 +4,47 @@ import { Link, NavLink } from 'react-router-dom';
 const LOGO_URL =
   'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png';
 
-const PublicBlogHeader = ({ settings }) => (
-  <header className="blog-topbar">
-    <div className="blog-topbar-inner">
-      <Link to="/" className="brand-logo-link">
-        <img
-          src={settings?.public_logo_url || LOGO_URL}
-          alt="Envision Wealth Planning"
-          className="brand-logo-img"
-        />
-      </Link>
+const isInternalHref = (href) => String(href || '').trim().startsWith('/');
 
-      <nav className="blog-main-tabs">
-        <NavLink to="/" end>
-          Blogs Home
-        </NavLink>
-        <NavLink to="/all-blogs">All Blogs</NavLink>
-        <NavLink to="/video-blogs">Video Blogs</NavLink>
-      </nav>
-    </div>
-  </header>
-);
+const PublicBlogHeader = ({ settings, navigation = [] }) => {
+  const navItems = (Array.isArray(navigation) ? navigation : []).filter(
+    (item) => item && item.visible !== false && String(item.label || '').trim()
+  );
+
+  return (
+    <header className="blog-topbar">
+      <div className="blog-topbar-inner">
+        <Link to="/" className="brand-logo-link">
+          <img
+            src={settings?.public_logo_url || LOGO_URL}
+            alt="Envision Wealth Planning"
+            className="brand-logo-img"
+          />
+        </Link>
+
+        {navItems.length ? (
+          <nav className="blog-main-tabs">
+            {navItems.map((item) =>
+              isInternalHref(item.href) ? (
+                <NavLink key={item.id || `${item.label}-${item.href}`} to={item.href} end={item.href === '/'}>
+                  {item.label}
+                </NavLink>
+              ) : (
+                <a
+                  key={item.id || `${item.label}-${item.href}`}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {item.label}
+                </a>
+              )
+            )}
+          </nav>
+        ) : null}
+      </div>
+    </header>
+  );
+};
 
 export default PublicBlogHeader;

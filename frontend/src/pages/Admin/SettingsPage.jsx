@@ -17,6 +17,7 @@ import {
   updateAdminUserStatus,
   updateCategory,
 } from '../../api/admin';
+import { invalidatePublicContentCache } from '../../api/public';
 import { getAllPageContent, getPageContent } from '../../utils/pageContent';
 
 const INTERNAL_ROUTE_CHOICES = [
@@ -125,6 +126,7 @@ const SettingsPage = () => {
         publicLogoUrl: settings.public_logo_url,
         pageContent: getAllPageContent(settings),
       });
+      invalidatePublicContentCache();
       await load();
     } finally {
       setSaving(false);
@@ -135,6 +137,7 @@ const SettingsPage = () => {
     setSaving(true);
     try {
       await saveNavigation(navigation);
+      invalidatePublicContentCache();
       await load();
     } finally {
       setSaving(false);
@@ -537,11 +540,14 @@ const SettingsPage = () => {
       <p className="settings-help">Maintain content taxonomy used in filters and organization.</p>
 
       <div className="settings-split">
-        <div className="settings-subcard">
-          <h4>Categories</h4>
-          <div className="stack-list">
+        <div className="settings-subcard compact-taxonomy-card">
+          <div className="compact-taxonomy-head">
+            <h4>Categories</h4>
+            <span>{categories.length}</span>
+          </div>
+          <div className="compact-taxonomy-list">
             {categories.map((item) => (
-              <div key={item.id} className="simple-row">
+              <div key={item.id} className="compact-taxonomy-row">
                 <input
                   value={item.name}
                   onChange={(e) =>
@@ -554,12 +560,14 @@ const SettingsPage = () => {
                 />
                 <button
                   type="button"
-                  onClick={() =>
-                    updateCategory(item.id, {
+                  className="compact-ghost-btn"
+                  onClick={async () => {
+                    await updateCategory(item.id, {
                       name: item.name,
                       description: item.description || '',
-                    })
-                  }
+                    });
+                    invalidatePublicContentCache();
+                  }}
                 >
                   Save
                 </button>
@@ -568,6 +576,7 @@ const SettingsPage = () => {
                   type="button"
                   onClick={async () => {
                     await deleteCategory(item.id);
+                    invalidatePublicContentCache();
                     await load();
                   }}
                 >
@@ -576,11 +585,11 @@ const SettingsPage = () => {
               </div>
             ))}
           </div>
-          <div className="simple-row">
+          <div className="compact-taxonomy-create">
             <input
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              placeholder="New category"
+              placeholder="Add category"
             />
             <button
               type="button"
@@ -588,6 +597,7 @@ const SettingsPage = () => {
                 if (!newCategory.trim()) return;
                 await createCategory({ name: newCategory.trim() });
                 setNewCategory('');
+                invalidatePublicContentCache();
                 await load();
               }}
             >
@@ -596,17 +606,21 @@ const SettingsPage = () => {
           </div>
         </div>
 
-        <div className="settings-subcard">
-          <h4>Tags</h4>
-          <div className="stack-list">
+        <div className="settings-subcard compact-taxonomy-card">
+          <div className="compact-taxonomy-head">
+            <h4>Tags</h4>
+            <span>{tags.length}</span>
+          </div>
+          <div className="compact-taxonomy-list">
             {tags.map((item) => (
-              <div key={item.id} className="simple-row">
+              <div key={item.id} className="compact-taxonomy-row compact-taxonomy-row-static">
                 <span>{item.name}</span>
                 <button
                   className="danger-btn"
                   type="button"
                   onClick={async () => {
                     await deleteTag(item.id);
+                    invalidatePublicContentCache();
                     await load();
                   }}
                 >
@@ -615,11 +629,11 @@ const SettingsPage = () => {
               </div>
             ))}
           </div>
-          <div className="simple-row">
+          <div className="compact-taxonomy-create">
             <input
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
-              placeholder="New tag"
+              placeholder="Add tag"
             />
             <button
               type="button"
@@ -627,6 +641,7 @@ const SettingsPage = () => {
                 if (!newTag.trim()) return;
                 await createTag({ name: newTag.trim() });
                 setNewTag('');
+                invalidatePublicContentCache();
                 await load();
               }}
             >

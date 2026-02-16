@@ -17,18 +17,11 @@ const normalizeMainSite = (raw) => {
   return `https://${value}`;
 };
 
-const DEFAULT_FOOTER_LINKS = [
-  { id: 'footer-1', label: "Blog's Home", href: '/', visible: true },
-  { id: 'footer-2', label: 'All Blogs', href: '/all-blogs', visible: true },
-  { id: 'footer-3', label: 'Video Blogs', href: '/video-blogs', visible: true },
-  { id: 'footer-4', label: 'Contact Us', href: 'https://envisionwealth.us/contact-us', visible: true },
-];
-
 const isInternalHref = (href) => String(href || '').trim().startsWith('/');
 
 const PublicBlogFooter = ({ settings, navigation = [] }) => {
   const mainWebsiteUrl = normalizeMainSite(settings?.primary_cta_href);
-  const footerLinks = (Array.isArray(navigation) && navigation.length ? navigation : DEFAULT_FOOTER_LINKS)
+  const footerLinks = (Array.isArray(navigation) ? navigation : [])
     .filter((item) => item && item.visible !== false && String(item.label || '').trim())
     .map((item) => ({
       id: item.id || item.label,
