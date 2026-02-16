@@ -74,6 +74,7 @@ const PostDetailPage = () => {
   const [blog, setBlog] = useState(null);
   const [allBlogs, setAllBlogs] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [copyState, setCopyState] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -138,7 +139,7 @@ const PostDetailPage = () => {
 
   const shareLinks = useMemo(() => {
     if (typeof window === 'undefined' || !blog) {
-      return { email: '#', linkedin: '#', x: '#' };
+      return { email: '#', linkedin: '#', x: '#', facebook: '#', whatsapp: '#', reddit: '#' };
     }
 
     const url = window.location.href;
@@ -146,13 +147,42 @@ const PostDetailPage = () => {
     const body = encodeURIComponent(`Check out this blog: ${url}`);
     const linkedInUrl = encodeURIComponent(url);
     const xText = encodeURIComponent(`${blog.title} ${url}`);
+    const fbUrl = encodeURIComponent(url);
+    const whatsappText = encodeURIComponent(`${blog.title} ${url}`);
+    const redditTitle = encodeURIComponent(blog.title);
 
     return {
       email: `mailto:?subject=${subject}&body=${body}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${linkedInUrl}`,
       x: `https://twitter.com/intent/tweet?text=${xText}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${fbUrl}`,
+      whatsapp: `https://wa.me/?text=${whatsappText}`,
+      reddit: `https://www.reddit.com/submit?url=${fbUrl}&title=${redditTitle}`,
     };
   }, [blog]);
+
+  const onCopyLink = async () => {
+    if (typeof window === 'undefined') return;
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopyState('Link copied');
+    } catch (_error) {
+      setCopyState('Copy failed');
+    }
+  };
+
+  const onNativeShare = async () => {
+    if (typeof window === 'undefined' || !navigator.share || !blog) return;
+    try {
+      await navigator.share({
+        title: blog.title,
+        text: blog.summary || blog.title,
+        url: window.location.href,
+      });
+    } catch (_error) {
+      // Ignore cancellation.
+    }
+  };
 
   if (loading) {
     return <div className="page-loading">Loading blog...</div>;
@@ -219,7 +249,15 @@ const PostDetailPage = () => {
               <a href={shareLinks.email}>Email</a>
               <a href={shareLinks.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
               <a href={shareLinks.x} target="_blank" rel="noreferrer">X</a>
+              <a href={shareLinks.facebook} target="_blank" rel="noreferrer">Facebook</a>
+              <a href={shareLinks.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href={shareLinks.reddit} target="_blank" rel="noreferrer">Reddit</a>
+              <button type="button" onClick={onCopyLink}>Copy Link</button>
+              {typeof navigator !== 'undefined' && navigator.share ? (
+                <button type="button" onClick={onNativeShare}>Share</button>
+              ) : null}
             </div>
+            {copyState ? <p className="share-note">{copyState}</p> : null}
           </section>
 
           <section className="related-box">

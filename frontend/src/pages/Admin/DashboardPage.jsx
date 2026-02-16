@@ -21,14 +21,49 @@ const DashboardPage = () => {
   return (
     <section className="admin-section">
       <h2>Dashboard</h2>
+      <p className="section-subtle">Live publishing health, content mix, and activity snapshots.</p>
       <div className="stat-grid">
         <article><h3>{data.totalBlogs}</h3><p>Total Blogs</p></article>
+        <article><h3>{data.byStatus?.published || 0}</h3><p>Published</p></article>
+        <article><h3>{data.byStatus?.pending_review || 0}</h3><p>Pending Review</p></article>
+        <article><h3>{data.byType?.video || 0}</h3><p>Video Blogs</p></article>
         <article><h3>{data.totalCategories}</h3><p>Categories</p></article>
-        <article><h3>{data.totalBlogs}</h3><p>Published + Draft</p></article>
         <article><h3>{data.totalTags}</h3><p>Tags</p></article>
       </div>
 
-      <h3>Quick Buttons</h3>
+      <div className="dashboard-grid">
+        <article className="dashboard-panel">
+          <h3>Status Breakdown</h3>
+          <div className="mini-list">
+            <span>Draft: {data.byStatus?.draft || 0}</span>
+            <span>Waiting Approval: {data.byStatus?.pending_review || 0}</span>
+            <span>Posted: {data.byStatus?.published || 0}</span>
+            <span>Archived: {data.byStatus?.archived || 0}</span>
+          </div>
+        </article>
+        <article className="dashboard-panel">
+          <h3>Publishing Trend</h3>
+          <div className="mini-list">
+            {(data.trend || []).map((point) => (
+              <span key={point.period}>
+                {point.period}: {point.count}
+              </span>
+            ))}
+            {!data.trend?.length && <span>No recent activity</span>}
+          </div>
+        </article>
+        <article className="dashboard-panel">
+          <h3>Recent Posts</h3>
+          <div className="mini-list">
+            {(data.recentPosts || []).map((post) => (
+              <span key={post.id}>{post.title} ({post.status})</span>
+            ))}
+            {!data.recentPosts?.length && <span>No posts yet</span>}
+          </div>
+        </article>
+      </div>
+
+      <h3>Quick Actions</h3>
       <div className="quick-actions">
         {data.quickActions.map((item) => (
           <Link key={item.href} to={item.href}>

@@ -13,7 +13,7 @@ const initialForm = {
   title: '',
   summary: '',
   category: '',
-  status: 'draft',
+  status: 'published',
   blogType: 'written',
   coverImg: '',
   blogURL: '',
@@ -25,6 +25,13 @@ const initialForm = {
   blogTags: '',
 };
 
+const STATUS_OPTIONS = [
+  { value: 'published', label: 'Posted' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'pending_review', label: 'Waiting Approval' },
+  { value: 'archived', label: 'Archived' },
+];
+
 const PostEditorPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,6 +42,7 @@ const PostEditorPage = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const isEdit = useMemo(() => Boolean(id), [id]);
 
@@ -73,6 +81,10 @@ const PostEditorPage = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const applyFormat = (command, value = null) => {
+    document.execCommand(command, false, value);
+  };
+
   const onUploadCover = async () => {
     if (!coverFile) {
       return;
@@ -109,11 +121,11 @@ const PostEditorPage = () => {
     }
   };
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
-
+  const saveWithStatus = async (nextStatus) => {
+    setIsSaving(true);
     const payload = {
       ...form,
+      status: nextStatus,
       blogTags: form.blogTags
         .split(',')
         .map((item) => item.trim())
@@ -121,19 +133,22 @@ const PostEditorPage = () => {
       publishDate: form.publishDate ? new Date(form.publishDate).toISOString() : null,
     };
 
-    if (isEdit) {
-      await updateBlog(id, payload);
-    } else {
-      await createBlog(payload);
+    try {
+      if (isEdit) {
+        await updateBlog(id, payload);
+      } else {
+        await createBlog(payload);
+      }
+      navigate('/admin/posts');
+    } finally {
+      setIsSaving(false);
     }
-
-    navigate('/admin/posts');
   };
 
   return (
-    <section>
+    <section className="editor-page-shell">
       <h2>{isEdit ? 'Edit Blog' : 'Create Blog'}</h2>
-      <form className="editor-form" onSubmit={onSubmit}>
+      <form className="editor-form compact-editor">
         <label>Title</label>
         <input name="title" value={form.title} onChange={onChange} required />
 
@@ -151,8 +166,9 @@ const PostEditorPage = () => {
           <div>
             <label>Status</label>
             <select name="status" value={form.status} onChange={onChange}>
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
+              {STATUS_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
           <div>
@@ -169,6 +185,9 @@ const PostEditorPage = () => {
 
         <label>Cover Image URL</label>
         <input name="coverImg" value={form.coverImg} onChange={onChange} />
+        {form.coverImg ? (
+          <img className="media-preview-image" src={form.coverImg} alt="Cover preview" />
+        ) : null}
 
         <div className="upload-row">
           <input type="file" accept="image/*" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} />
@@ -191,7 +210,22 @@ const PostEditorPage = () => {
         {form.blogType === 'written' ? (
           <>
             <label>Written Content</label>
-            <textarea name="content" value={form.content} onChange={onChange} rows={8} />
+            <div className="rich-toolbar">
+              <button type="button" onClick={() => applyFormat('bold')}>B</button>
+              <button type="button" onClick={() => applyFormat('italic')}><em>I</em></button>
+              <button type="button" onClick={() => applyFormat('insertUnorderedList')}>• List</button>
+              <button type="button" onClick={() => applyFormat('formatBlock', 'h2')}>H2</button>
+              <button type="button" onClick={() => applyFormat('removeFormat')}>Clear</button>
+            </div>
+            <div
+              className="rich-editor"
+              contentEditable
+              suppressContentEditableWarning
+              onInput={(event) =>
+                setForm((prev) => ({ ...prev, content: event.currentTarget.innerHTML }))
+              }
+              dangerouslySetInnerHTML={{ __html: form.content || '' }}
+            />
           </>
         ) : (
           <>
@@ -206,6 +240,18 @@ const PostEditorPage = () => {
             />
             <label>Video File URL</label>
             <input name="vlogURL" value={form.vlogURL} onChange={onChange} />
+            {form.vlogEmbed ? (
+              <iframe
+                title="Embed preview"
+                className="media-preview-video"
+                src={form.vlogEmbed}
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : null}
+            {!form.vlogEmbed && form.vlogURL ? (
+              <video className="media-preview-video" src={form.vlogURL} controls preload="metadata" />
+            ) : null}
             <div className="upload-row">
               <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} />
               <button type="button" onClick={onUploadVideo} disabled={!videoFile || isUploadingVideo}>
@@ -215,7 +261,23 @@ const PostEditorPage = () => {
           </>
         )}
 
-        <button type="submit">Save Blog</button>
+        <div className="form-actions">
+          <button
+            type="button"
+            className="mode-switch"
+            onClick={() => saveWithStatus('draft')}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : 'Save as Draft'}
+          </button>
+          <button
+            type="button"
+            onClick={() => saveWithStatus('published')}
+            disabled={isSaving}
+          >
+            {isSaving ? 'Saving...' : 'Save and Post'}
+          </button>
+        </div>
       </form>
     </section>
   );

@@ -63,6 +63,8 @@ const SettingsPage = () => {
       secondaryCtaLabel: settings.secondary_cta_label,
       secondaryCtaHref: settings.secondary_cta_href,
       accentMessage: settings.accent_message,
+      adminLogoUrl: settings.admin_logo_url,
+      publicLogoUrl: settings.public_logo_url,
     });
     await load();
   };
@@ -93,6 +95,18 @@ const SettingsPage = () => {
           <input value={settings.secondary_cta_href} onChange={(e) => setSettings((prev) => ({ ...prev, secondary_cta_href: e.target.value }))} />
           <label>Accent Message</label>
           <input value={settings.accent_message} onChange={(e) => setSettings((prev) => ({ ...prev, accent_message: e.target.value }))} />
+          <label>Sidebar Logo URL</label>
+          <input
+            placeholder="https://..."
+            value={settings.admin_logo_url || ''}
+            onChange={(e) => setSettings((prev) => ({ ...prev, admin_logo_url: e.target.value }))}
+          />
+          <label>Public Logo URL</label>
+          <input
+            placeholder="https://..."
+            value={settings.public_logo_url || ''}
+            onChange={(e) => setSettings((prev) => ({ ...prev, public_logo_url: e.target.value }))}
+          />
           <button type="submit">Save Site Settings</button>
         </form>
       </article>
