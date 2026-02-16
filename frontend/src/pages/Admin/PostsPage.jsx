@@ -4,6 +4,20 @@ import { deleteBlog, fetchAdminBlogs, updateBlog } from '../../api/admin';
 
 const STATUS_OPTIONS = ['all', 'published', 'draft', 'pending_review', 'archived'];
 
+const Icon = ({ name }) => {
+  const paths = {
+    eye: 'M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7zm0 11a4 4 0 110-8 4 4 0 010 8z',
+    edit: 'M4 16.5V20h3.5l10-10-3.5-3.5-10 10zM19.7 7.3a1 1 0 000-1.4L17.1 3.3a1 1 0 00-1.4 0l-1.5 1.5 3.5 3.5 2-2z',
+    trash: 'M7 7h10l-1 13H8L7 7zm2-3h6l1 2H8l1-2z',
+    wand: 'M3 21l9-9m-3-9l2-2 3 3-2 2m3 6l2-2 3 3-2 2',
+  };
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="btn-icon">
+      <path d={paths[name]} />
+    </svg>
+  );
+};
+
 const PostsPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,6 +27,7 @@ const PostsPage = () => {
   const [bulkStatus, setBulkStatus] = useState('published');
   const [bulkBusy, setBulkBusy] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [confirmModal, setConfirmModal] = useState(null);
   const PAGE_SIZE = 8;
 
   const load = async () => {
@@ -25,9 +40,12 @@ const PostsPage = () => {
   }, []);
 
   const onDelete = async (id) => {
-    if (!window.confirm('Delete this blog?')) return;
-    await deleteBlog(id);
-    await load();
+    setConfirmModal({
+      type: 'single-delete',
+      title: 'Delete blog?',
+      message: 'This blog will be permanently removed.',
+      targetId: id,
+    });
   };
 
   const toggleSelected = (id) => {
@@ -68,14 +86,29 @@ const PostsPage = () => {
 
   const runBulkDelete = async () => {
     if (!selectedIds.length) return;
-    if (!window.confirm(`Delete ${selectedIds.length} selected blog(s)?`)) return;
+    setConfirmModal({
+      type: 'bulk-delete',
+      title: `Delete ${selectedIds.length} selected blogs?`,
+      message: 'This action cannot be undone.',
+    });
+  };
+
+  const confirmAction = async () => {
+    if (!confirmModal) return;
+
     setBulkBusy(true);
     try {
-      await Promise.all(selectedIds.map((id) => deleteBlog(id)));
-      setSelectedIds([]);
+      if (confirmModal.type === 'single-delete' && confirmModal.targetId) {
+        await deleteBlog(confirmModal.targetId);
+      }
+      if (confirmModal.type === 'bulk-delete') {
+        await Promise.all(selectedIds.map((id) => deleteBlog(id)));
+        setSelectedIds([]);
+      }
       await load();
     } finally {
       setBulkBusy(false);
+      setConfirmModal(null);
     }
   };
 
@@ -213,6 +246,7 @@ const PostsPage = () => {
           <option value="archived">Set Archived</option>
         </select>
         <button type="button" onClick={runBulkStatusUpdate} disabled={!selectedIds.length || bulkBusy}>
+          <Icon name="wand" />
           {bulkBusy ? 'Updating...' : 'Bulk Update Status'}
         </button>
         <button
@@ -221,6 +255,7 @@ const PostsPage = () => {
           onClick={runBulkDelete}
           disabled={!selectedIds.length || bulkBusy}
         >
+          <Icon name="trash" />
           {bulkBusy ? 'Working...' : 'Bulk Delete'}
         </button>
       </div>
@@ -262,9 +297,18 @@ const PostsPage = () => {
                 <td>{blog.category || '-'}</td>
                 <td>
                   <div className="table-actions">
-                    <Link className="table-link-btn" to={`/admin/posts/${blog.id}/view`}>View</Link>
-                    <Link className="table-link-btn" to={`/admin/posts/${blog.id}/edit`}>Edit</Link>
-                    <button className="danger-btn" type="button" onClick={() => onDelete(blog.id)}>Delete</button>
+                    <Link className="table-link-btn" to={`/admin/posts/${blog.id}/view`}>
+                      <Icon name="eye" />
+                      View
+                    </Link>
+                    <Link className="table-link-btn" to={`/admin/posts/${blog.id}/edit`}>
+                      <Icon name="edit" />
+                      Edit
+                    </Link>
+                    <button className="danger-btn" type="button" onClick={() => onDelete(blog.id)}>
+                      <Icon name="trash" />
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -301,6 +345,23 @@ const PostsPage = () => {
           Next
         </button>
       </div>
+
+      {confirmModal ? (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-card">
+            <h3>{confirmModal.title}</h3>
+            <p>{confirmModal.message}</p>
+            <div className="modal-actions">
+              <button type="button" className="mode-switch" onClick={() => setConfirmModal(null)}>
+                Cancel
+              </button>
+              <button type="button" className="danger-btn" onClick={confirmAction} disabled={bulkBusy}>
+                {bulkBusy ? 'Processing...' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 };

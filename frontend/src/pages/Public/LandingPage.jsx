@@ -1,8 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
-import BlogListSection from '../../components/public/BlogListSection';
 import { fetchLanding } from '../../api/public';
+
+const formatDate = (value) => {
+  if (!value) return 'Unscheduled';
+  return new Date(value).toLocaleDateString();
+};
 
 const LandingPage = () => {
   const [loading, setLoading] = useState(true);
@@ -51,15 +56,33 @@ const LandingPage = () => {
       <main className="landing-main compact-main">
         <div className="section-title-row">
           <h2>Recent Posts</h2>
-          <p>Browse recent insights or use the tabs above for full listings.</p>
+          <p>Latest 3 insights from the editorial desk.</p>
         </div>
-        <BlogListSection
-          blogs={latest}
-          categories={data.categories || []}
-          tags={data.tags || []}
-          mode="all"
-          staggered
-        />
+        <section className="landing-simple-section">
+          <div className="landing-simple-grid">
+            {latest.map((blog) => (
+              <article key={blog.id} className="blog-card compact-card">
+                {blog.coverImg ? (
+                  <div className="card-image-wrap">
+                    <img src={blog.coverImg} alt={blog.title} />
+                  </div>
+                ) : null}
+                <div className="blog-card-body">
+                  <p className="meta">
+                    {blog.category || 'General'} * {formatDate(blog.publishDate)}
+                  </p>
+                  <h3>{blog.title}</h3>
+                  <p>{blog.summary || 'Read this post for details and insights.'}</p>
+                  <div className="card-footer">
+                    <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
+                      {blog.blogType === 'video' ? 'Watch now' : 'Read article'}
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       </main>
 
       <PublicBlogFooter settings={data.settings} />
