@@ -17,11 +17,25 @@ const normalizeMainSite = (raw) => {
   return `https://${value}`;
 };
 
-const PublicBlogFooter = ({ settings }) => {
+const DEFAULT_FOOTER_LINKS = [
+  { id: 'footer-1', label: "Blog's Home", href: '/', visible: true },
+  { id: 'footer-2', label: 'All Blogs', href: '/all-blogs', visible: true },
+  { id: 'footer-3', label: 'Video Blogs', href: '/video-blogs', visible: true },
+  { id: 'footer-4', label: 'Contact Us', href: 'https://envisionwealth.us/contact-us', visible: true },
+];
+
+const isInternalHref = (href) => String(href || '').trim().startsWith('/');
+
+const PublicBlogFooter = ({ settings, navigation = [] }) => {
   const mainWebsiteUrl = normalizeMainSite(settings?.primary_cta_href);
-  const OUR_DIFFERENCE_URL = 'https://envisionwealth.us/revamp/our-approach#Our-Difference';
-  const OUR_TEAM_URL = 'https://envisionwealth.us/revamp/about';
-  const CONTACT_URL = 'https://envisionwealth.us/contact-us';
+  const footerLinks = (Array.isArray(navigation) && navigation.length ? navigation : DEFAULT_FOOTER_LINKS)
+    .filter((item) => item && item.visible !== false && String(item.label || '').trim())
+    .map((item) => ({
+      id: item.id || item.label,
+      label: item.label,
+      href: String(item.href || '').trim() || '/',
+    }));
+
   const SocialIcon = ({ name }) => {
     const paths = {
       facebook:
@@ -53,10 +67,17 @@ const PublicBlogFooter = ({ settings }) => {
         </a>
 
         <nav className="footer-nav-links">
-          <a href={mainWebsiteUrl} target="_blank" rel="noreferrer">Blog&apos;s Home</a>
-          <a href={OUR_DIFFERENCE_URL} target="_blank" rel="noreferrer">Our Difference</a>
-          <a href={OUR_TEAM_URL} target="_blank" rel="noreferrer">Our Team</a>
-          <a href={CONTACT_URL} target="_blank" rel="noreferrer">Contact Us</a>
+          {footerLinks.map((item) =>
+            isInternalHref(item.href) ? (
+              <Link key={item.id} to={item.href}>
+                {item.label}
+              </Link>
+            ) : (
+              <a key={item.id} href={item.href} target="_blank" rel="noreferrer">
+                {item.label}
+              </a>
+            )
+          )}
           <Link to="/admin/login" className="footer-admin-link">Admin</Link>
         </nav>
 

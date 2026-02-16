@@ -74,6 +74,7 @@ const PostDetailPage = () => {
   const [blog, setBlog] = useState(null);
   const [allBlogs, setAllBlogs] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [navigation, setNavigation] = useState([]);
   const [copyState, setCopyState] = useState('');
 
   useEffect(() => {
@@ -86,6 +87,7 @@ const PostDetailPage = () => {
         setBlog(blogRes.data || null);
         setAllBlogs(landingRes.data?.blogs || []);
         setSettings(landingRes.data?.settings || null);
+        setNavigation(landingRes.data?.navigation || []);
       } finally {
         setLoading(false);
       }
@@ -275,7 +277,7 @@ const PostDetailPage = () => {
         </aside>
       </article>
 
-      <PublicBlogFooter settings={settings} />
+      <PublicBlogFooter settings={settings} navigation={navigation} />
     </div>
   );
 };

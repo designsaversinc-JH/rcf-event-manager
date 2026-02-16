@@ -21,6 +21,11 @@ const sanitizeName = (value, fallback) => {
   return trimmed || fallback;
 };
 
+const isPublicSignupEnabled = () =>
+  String(process.env.ALLOW_PUBLIC_SIGNUP || '')
+    .trim()
+    .toLowerCase() === 'true';
+
 router.post('/login', async (req, res, next) => {
   try {
     requireJwtSecret();
@@ -137,6 +142,12 @@ router.post('/firebase-login', async (req, res, next) => {
 router.post('/firebase-signup', async (req, res, next) => {
   try {
     requireJwtSecret();
+
+    if (!isPublicSignupEnabled()) {
+      return res.status(403).json({
+        message: 'Public signup is disabled. Please contact an administrator.',
+      });
+    }
 
     if (!isFirebaseAdminConfigured()) {
       return res

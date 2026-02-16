@@ -4,6 +4,12 @@ const { getFirestoreDb, isFirebaseAdminConfigured } = require('../config/firebas
 const { normalizePageContent } = require('../utils/pageContentDefaults');
 
 const router = express.Router();
+const setCacheHeaders = (res, maxAgeSeconds) => {
+  res.set(
+    'Cache-Control',
+    `public, max-age=${maxAgeSeconds}, s-maxage=${maxAgeSeconds}, stale-while-revalidate=86400`
+  );
+};
 
 const mapBlog = (row) => ({
   id: row.id,
@@ -72,6 +78,7 @@ const fetchFirestoreTaxonomy = async () => {
 
 router.get('/landing', async (_req, res, next) => {
   try {
+    setCacheHeaders(res, 300);
     const [settingsResult, navResult, blogsResult, jobsResult, categoriesResult, tagsResult] =
       await Promise.all([
         query('SELECT * FROM site_settings WHERE id = $1 LIMIT 1', ['default']),
@@ -124,6 +131,7 @@ router.get('/landing', async (_req, res, next) => {
 
 router.get('/blogs', async (_req, res, next) => {
   try {
+    setCacheHeaders(res, 300);
     const { rows } = await query(
       `SELECT b.*, COALESCE(array_remove(array_agg(t.name), NULL), '{}') AS blog_tags
        FROM blogs b
@@ -143,6 +151,7 @@ router.get('/blogs', async (_req, res, next) => {
 
 router.get('/blogs/:identifier', async (req, res, next) => {
   try {
+    setCacheHeaders(res, 300);
     const identifier = req.params.identifier;
     const { rows } = await query(
       `SELECT b.*, COALESCE(array_remove(array_agg(t.name), NULL), '{}') AS blog_tags

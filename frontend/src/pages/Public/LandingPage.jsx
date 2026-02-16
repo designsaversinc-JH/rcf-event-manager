@@ -18,6 +18,7 @@ const LandingPage = () => {
     categories: [],
     tags: [],
     settings: null,
+    navigation: [],
   });
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const LandingPage = () => {
         </section>
       </main>
 
-      <PublicBlogFooter settings={data.settings} />
+      <PublicBlogFooter settings={data.settings} navigation={data.navigation || []} />
     </div>
   );
 };

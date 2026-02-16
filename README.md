@@ -12,9 +12,10 @@ This project was rebuilt as a simple full-stack app for your client workflow:
 - Backend: Express + PostgreSQL + JWT auth
 - Firebase: Auth (admin sign-in) + Storage (blog image/video uploads)
 
-## Default Admin Login
-- Email: `admin@example.com`
-- Password: `Password123!`
+## Admin Access
+- Public self-signup is disabled by default for production safety.
+- Admin users should be created by an existing admin in `Settings > Team & Access`, or directly in the `admin_users` table.
+- If you need temporary public signup for onboarding, set backend env `ALLOW_PUBLIC_SIGNUP=true` and disable it after onboarding.
 
 ## Firebase Schema Mapping
 The backend schema mirrors your Firebase fields using SQL tables:
@@ -94,3 +95,4 @@ Set these Netlify environment variables:
 ## Notes
 - DB schema + seed data are in `backend/db/schema.sql` and run automatically on backend start.
 - If you keep production-like secrets in `backend/.env`, rotate credentials before sharing this repo.
+- Public API endpoints now use cache headers (`max-age=300`, `stale-while-revalidate`) and frontend local cache (5 minutes) for faster repeat page loads.

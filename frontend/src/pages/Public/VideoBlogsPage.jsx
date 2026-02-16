@@ -8,7 +8,7 @@ import usePageMeta from '../../hooks/usePageMeta';
 
 const VideoBlogsPage = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({ blogs: [], categories: [], tags: [], settings: null });
+  const [data, setData] = useState({ blogs: [], categories: [], tags: [], settings: null, navigation: [] });
   const pageContent = getPageContent(data.settings, 'video_blogs');
 
   usePageMeta({
@@ -54,7 +54,7 @@ const VideoBlogsPage = () => {
         />
       </main>
 
-      <PublicBlogFooter settings={data.settings} />
+      <PublicBlogFooter settings={data.settings} navigation={data.navigation || []} />
     </div>
   );
 };
