@@ -11,6 +11,7 @@ import LoginPage from '../pages/Admin/LoginPage';
 import DashboardPage from '../pages/Admin/DashboardPage';
 import PostsPage from '../pages/Admin/PostsPage';
 import PostEditorPage from '../pages/Admin/PostEditorPage';
+import PostViewPage from '../pages/Admin/PostViewPage';
 import JobsPage from '../pages/Admin/JobsPage';
 import SettingsPage from '../pages/Admin/SettingsPage';
 import NotFoundPage from '../pages/NotFoundPage';
@@ -38,6 +39,7 @@ const AppRouter = () => (
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="posts" element={<PostsPage />} />
       <Route path="posts/new" element={<PostEditorPage />} />
+      <Route path="posts/:id/view" element={<PostViewPage />} />
       <Route path="posts/:id/edit" element={<PostEditorPage />} />
       <Route path="jobs" element={<JobsPage />} />
       <Route path="settings" element={<SettingsPage />} />

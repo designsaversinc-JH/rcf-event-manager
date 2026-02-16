@@ -12,6 +12,8 @@ const PostsPage = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [bulkStatus, setBulkStatus] = useState('published');
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 8;
 
   const load = async () => {
     const response = await fetchAdminBlogs();
@@ -35,7 +37,7 @@ const PostsPage = () => {
   };
 
   const toggleAllVisible = () => {
-    const visibleIds = filteredBlogs.map((blog) => blog.id);
+    const visibleIds = pagedBlogs.map((blog) => blog.id);
     const allSelected = visibleIds.every((id) => selectedIds.includes(id));
     if (allSelected) {
       setSelectedIds((prev) => prev.filter((id) => !visibleIds.includes(id)));
@@ -98,6 +100,22 @@ const PostsPage = () => {
     });
   }, [blogs, searchTerm, statusFilter, typeFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredBlogs.length / PAGE_SIZE));
+  const pagedBlogs = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredBlogs.slice(start, start + PAGE_SIZE);
+  }, [filteredBlogs, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, typeFilter]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const metrics = useMemo(() => {
     const byStatus = { published: 0, draft: 0, pending_review: 0, archived: 0 };
     let videos = 0;
@@ -148,11 +166,6 @@ const PostsPage = () => {
             </option>
           ))}
         </select>
-        <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
-          <option value="all">All Types</option>
-          <option value="written">Written</option>
-          <option value="video">Video</option>
-        </select>
         <button
           type="button"
           className="mode-switch"
@@ -160,9 +173,34 @@ const PostsPage = () => {
             setSearchTerm('');
             setStatusFilter('all');
             setTypeFilter('all');
+            setCurrentPage(1);
           }}
         >
           Reset Filters
+        </button>
+      </div>
+
+      <div className="list-tabs">
+        <button
+          type="button"
+          className={typeFilter === 'all' ? 'active' : ''}
+          onClick={() => setTypeFilter('all')}
+        >
+          All
+        </button>
+        <button
+          type="button"
+          className={typeFilter === 'written' ? 'active' : ''}
+          onClick={() => setTypeFilter('written')}
+        >
+          Written
+        </button>
+        <button
+          type="button"
+          className={typeFilter === 'video' ? 'active' : ''}
+          onClick={() => setTypeFilter('video')}
+        >
+          Video
         </button>
       </div>
 
@@ -194,7 +232,7 @@ const PostsPage = () => {
               <th>
                 <input
                   type="checkbox"
-                  checked={!!filteredBlogs.length && filteredBlogs.every((blog) => selectedIds.includes(blog.id))}
+                  checked={!!pagedBlogs.length && pagedBlogs.every((blog) => selectedIds.includes(blog.id))}
                   onChange={toggleAllVisible}
                 />
               </th>
@@ -206,7 +244,7 @@ const PostsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredBlogs.map((blog) => (
+            {pagedBlogs.map((blog) => (
               <tr key={blog.id}>
                 <td>
                   <input
@@ -224,13 +262,14 @@ const PostsPage = () => {
                 <td>{blog.category || '-'}</td>
                 <td>
                   <div className="table-actions">
+                    <Link className="table-link-btn" to={`/admin/posts/${blog.id}/view`}>View</Link>
                     <Link className="table-link-btn" to={`/admin/posts/${blog.id}/edit`}>Edit</Link>
                     <button className="danger-btn" type="button" onClick={() => onDelete(blog.id)}>Delete</button>
                   </div>
                 </td>
               </tr>
             ))}
-            {!filteredBlogs.length && (
+            {!pagedBlogs.length && (
               <tr>
                 <td colSpan={6} className="table-empty">
                   No posts match the current filters.
@@ -239,6 +278,28 @@ const PostsPage = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="list-pagination">
+        <button
+          type="button"
+          className="mode-switch"
+          onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          type="button"
+          className="mode-switch"
+          onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </section>
   );

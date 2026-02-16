@@ -40,9 +40,10 @@ const PublicBlogFooter = ({ settings }) => {
         </nav>
 
         <div className="footer-social">
-          <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
-          <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">ig</a>
-          <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube">yt</a>
+          <a href="https://www.facebook.com/envisionwealth" target="_blank" rel="noreferrer" aria-label="Facebook">FB</a>
+          <a href="https://www.linkedin.com/company/envisionwealth" target="_blank" rel="noreferrer" aria-label="LinkedIn">IN</a>
+          <a href="https://www.youtube.com/@envisionwealthplanningchic2051" target="_blank" rel="noreferrer" aria-label="YouTube">YT</a>
+          <a href="https://bsky.app/profile/envisionwealth.bsky.social" target="_blank" rel="noreferrer" aria-label="Bluesky">BS</a>
         </div>
       </div>
     </footer>
