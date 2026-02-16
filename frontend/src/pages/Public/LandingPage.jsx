@@ -27,7 +27,7 @@ const LandingPage = () => {
   }, []);
 
   const latest = useMemo(() => {
-    return [...(data.blogs || [])].slice(0, 4);
+    return [...(data.blogs || [])].slice(0, 3);
   }, [data.blogs]);
 
   if (loading) {
