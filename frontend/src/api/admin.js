@@ -27,6 +27,7 @@ export const saveNavigation = (items) => apiClient.put('/admin/navigation', { it
 
 export const fetchSettings = () => apiClient.get('/admin/settings');
 export const saveSettings = (payload) => apiClient.put('/admin/settings', payload);
+export const fetchHelpContent = () => apiClient.get('/admin/help');
 
 export const fetchAdminUsers = () => apiClient.get('/admin/users');
 export const createAdminUser = (payload) => apiClient.post('/admin/users', payload);

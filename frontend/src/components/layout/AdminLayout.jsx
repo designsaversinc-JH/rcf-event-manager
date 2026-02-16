@@ -40,6 +40,7 @@ const AdminLayout = () => {
           <NavLink to="/admin/dashboard">Dashboard</NavLink>
           <NavLink to="/admin/posts">Blogs</NavLink>
           <NavLink to="/admin/settings">Settings</NavLink>
+          <NavLink to="/admin/help">Help</NavLink>
         </nav>
         <div className="admin-user-panel">
           <p>{user?.name}</p>

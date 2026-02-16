@@ -5,6 +5,7 @@ const slugify = require('slugify');
 const { query } = require('../config/db');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const { normalizePageContent } = require('../utils/pageContentDefaults');
+const { getHelpContent } = require('../utils/helpContent');
 
 const router = express.Router();
 
@@ -61,6 +62,10 @@ const syncBlogTags = async (blogId, tagNamesInput = []) => {
     ]);
   }
 };
+
+router.get('/help', async (_req, res) => {
+  return res.status(200).json(getHelpContent());
+});
 
 router.get('/dashboard', async (_req, res, next) => {
   try {

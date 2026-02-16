@@ -1477,6 +1477,67 @@ td {
   transform: translateX(18px);
 }
 
+.help-page {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.help-header {
+  background: #fff;
+  border: 1px solid #d8e4ec;
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+.help-header h2 {
+  margin: 0 0 0.35rem;
+}
+
+.help-header p {
+  margin: 0;
+  color: #5a6d7d;
+}
+
+.help-card {
+  background: #fff;
+  border: 1px solid #d8e4ec;
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+.help-card h3 {
+  margin: 0 0 0.6rem;
+}
+
+.help-card ol {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.help-faq-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.help-faq-item {
+  border: 1px solid #e2edf5;
+  border-radius: 10px;
+  background: #fbfdff;
+  padding: 0.55rem 0.65rem;
+}
+
+.help-faq-item summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.help-faq-item p {
+  margin: 0.5rem 0 0;
+  color: #405769;
+}
+
 .not-found {
   min-height: 80vh;
   display: grid;

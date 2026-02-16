@@ -2,6 +2,7 @@ const express = require('express');
 const { query } = require('../config/db');
 const { getFirestoreDb, isFirebaseAdminConfigured } = require('../config/firebaseAdmin');
 const { normalizePageContent } = require('../utils/pageContentDefaults');
+const { getHelpContent } = require('../utils/helpContent');
 
 const router = express.Router();
 const setCacheHeaders = (res, maxAgeSeconds) => {
@@ -10,6 +11,11 @@ const setCacheHeaders = (res, maxAgeSeconds) => {
     `public, max-age=${maxAgeSeconds}, s-maxage=${maxAgeSeconds}, stale-while-revalidate=86400`
   );
 };
+
+router.get('/help', async (_req, res) => {
+  setCacheHeaders(res, 300);
+  return res.status(200).json(getHelpContent());
+});
 
 const mapBlog = (row) => ({
   id: row.id,
