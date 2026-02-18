@@ -214,15 +214,6 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO navigation_items (id, label, href, position, visible)
-VALUES
-  ('nav-1', 'Our Approach', '/approach', 1, TRUE),
-  ('nav-2', 'Our Services', '/services', 2, TRUE),
-  ('nav-3', 'Insights', '/#blogs', 3, TRUE),
-  ('nav-4', 'Careers', '/#jobs', 4, TRUE),
-  ('nav-5', 'Contact', '/contact', 5, TRUE)
-ON CONFLICT (id) DO NOTHING;
-
 INSERT INTO categories (id, name, description)
 VALUES
   ('cat-1', 'Market Insights', 'Updates on investment and financial planning trends.'),
