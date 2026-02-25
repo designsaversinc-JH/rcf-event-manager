@@ -5,6 +5,11 @@ const { normalizePageContent } = require('../utils/pageContentDefaults');
 const { getHelpContent } = require('../utils/helpContent');
 
 const router = express.Router();
+const TAXONOMY_CACHE_TTL_MS = Number(process.env.FIRESTORE_TAXONOMY_CACHE_TTL_MS || 5 * 60 * 1000);
+let taxonomyCache = null;
+let taxonomyCacheUpdatedAt = 0;
+let taxonomyRefreshInFlight = null;
+
 const setCacheHeaders = (res, maxAgeSeconds) => {
   res.set(
     'Cache-Control',
@@ -82,6 +87,38 @@ const fetchFirestoreTaxonomy = async () => {
   return { categories, tags };
 };
 
+const hasUsableTaxonomy = (taxonomy) =>
+  Boolean(taxonomy?.categories?.length || taxonomy?.tags?.length);
+
+const getCachedTaxonomy = () => {
+  if (!hasUsableTaxonomy(taxonomyCache)) return null;
+  if (Date.now() - taxonomyCacheUpdatedAt > TAXONOMY_CACHE_TTL_MS) return null;
+  return taxonomyCache;
+};
+
+const refreshTaxonomyCache = async () => {
+  if (!isFirebaseAdminConfigured()) return null;
+  if (taxonomyRefreshInFlight) return taxonomyRefreshInFlight;
+
+  taxonomyRefreshInFlight = (async () => {
+    try {
+      const taxonomy = await fetchFirestoreTaxonomy();
+      if (hasUsableTaxonomy(taxonomy)) {
+        taxonomyCache = taxonomy;
+        taxonomyCacheUpdatedAt = Date.now();
+      }
+    } catch (_error) {
+      // Ignore taxonomy refresh failures and keep serving DB taxonomy.
+    } finally {
+      taxonomyRefreshInFlight = null;
+    }
+
+    return taxonomyCache;
+  })();
+
+  return taxonomyRefreshInFlight;
+};
+
 router.get('/landing', async (_req, res, next) => {
   try {
     setCacheHeaders(res, 300);
@@ -110,11 +147,9 @@ router.get('/landing', async (_req, res, next) => {
         query('SELECT id, name, updated_at, created_at FROM tags ORDER BY name ASC'),
       ]);
 
-    let taxonomy = null;
-    try {
-      taxonomy = await fetchFirestoreTaxonomy();
-    } catch (_error) {
-      taxonomy = null;
+    const cachedTaxonomy = getCachedTaxonomy();
+    if (!cachedTaxonomy) {
+      void refreshTaxonomyCache();
     }
 
     res.status(200).json({
@@ -127,8 +162,8 @@ router.get('/landing', async (_req, res, next) => {
       navigation: navResult.rows,
       blogs: blogsResult.rows.map(mapBlog),
       jobs: jobsResult.rows,
-      categories: taxonomy?.categories?.length ? taxonomy.categories : categoriesResult.rows,
-      tags: taxonomy?.tags?.length ? taxonomy.tags : tagsResult.rows,
+      categories: cachedTaxonomy?.categories?.length ? cachedTaxonomy.categories : categoriesResult.rows,
+      tags: cachedTaxonomy?.tags?.length ? cachedTaxonomy.tags : tagsResult.rows,
     });
   } catch (error) {
     next(error);
