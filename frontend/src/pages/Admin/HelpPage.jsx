@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { fetchHelpContent } from '../../api/admin';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const HelpPage = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+
+  usePageMeta({
+    title: 'Help Center | Envision Wealth Planning',
+    description: 'Documentation, quick start steps, and FAQs for admin users.',
+    canonicalUrl: '/admin/help',
+    noIndex: true,
+  });
 
   useEffect(() => {
     const load = async () => {

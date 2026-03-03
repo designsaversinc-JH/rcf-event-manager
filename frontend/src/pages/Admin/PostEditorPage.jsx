@@ -8,6 +8,7 @@ import {
   updateBlog,
 } from '../../api/admin';
 import { uploadFileToFirebaseStorage } from '../../utils/firebaseStorageUpload';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const initialForm = {
   title: '',
@@ -45,6 +46,13 @@ const PostEditorPage = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const isEdit = useMemo(() => Boolean(id), [id]);
+
+  usePageMeta({
+    title: `${isEdit ? 'Edit Post' : 'Create Post'} | Envision Wealth Planning`,
+    description: 'Create and edit written or video posts for the blog.',
+    canonicalUrl: isEdit ? `/admin/posts/${id}/edit` : '/admin/posts/new',
+    noIndex: true,
+  });
 
   useEffect(() => {
     const load = async () => {

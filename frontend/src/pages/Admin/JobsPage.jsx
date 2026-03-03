@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createJob, deleteJob, fetchJobs, updateJob } from '../../api/admin';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const emptyJob = {
   title: '',
@@ -15,6 +16,13 @@ const JobsPage = () => {
   const [jobs, setJobs] = useState([]);
   const [form, setForm] = useState(emptyJob);
   const [editingId, setEditingId] = useState(null);
+
+  usePageMeta({
+    title: 'Jobs | Envision Wealth Planning',
+    description: 'Manage career listings and application links.',
+    canonicalUrl: '/admin/jobs',
+    noIndex: true,
+  });
 
   const load = async () => {
     const response = await fetchJobs();

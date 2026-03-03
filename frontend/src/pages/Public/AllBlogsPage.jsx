@@ -10,11 +10,24 @@ const AllBlogsPage = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ blogs: [], categories: [], tags: [], settings: null, navigation: [] });
   const pageContent = getPageContent(data.settings, 'all_blogs');
+  const canonicalPath = pageContent.canonical_url || '/all-blogs';
+  const seoImage =
+    data.settings?.public_logo_url ||
+    'https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg';
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: pageContent.meta_title || `${data.settings?.site_title || 'Envision Wealth Planning'} | All Blogs`,
+    description: pageContent.meta_description,
+    url: canonicalPath,
+  };
 
   usePageMeta({
     title: pageContent.meta_title || `${data.settings?.site_title || 'Envision Wealth Planning'} | All Blogs`,
     description: pageContent.meta_description,
-    canonicalUrl: pageContent.canonical_url,
+    canonicalUrl: canonicalPath,
+    image: seoImage,
+    structuredData,
   });
 
   useEffect(() => {

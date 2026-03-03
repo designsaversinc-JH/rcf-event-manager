@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchAdminBlog } from '../../api/admin';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const stripScripts = (html) =>
   String(html || '')
@@ -53,6 +54,15 @@ const PostViewPage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [blog, setBlog] = useState(null);
+
+  usePageMeta({
+    title: blog?.title ? `${blog.title} | Admin View` : 'View Post | Envision Wealth Planning',
+    description: blog?.summary || 'Preview post details in the admin dashboard.',
+    canonicalUrl: `/admin/posts/${id}/view`,
+    image: blog?.coverImg || '',
+    type: blog?.blogType === 'video' ? 'video.other' : 'article',
+    noIndex: true,
+  });
 
   useEffect(() => {
     const load = async () => {

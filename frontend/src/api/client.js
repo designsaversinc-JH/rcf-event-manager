@@ -1,6 +1,33 @@
 import axios from 'axios';
 
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const isRunningOnLocalHost = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
+};
+
+const resolveDefaultApiBaseUrl = () => {
+  if (isRunningOnLocalHost()) {
+    return 'http://localhost:5000/api';
+  }
+
+  return '/api';
+};
+
+const configuredApiBaseUrl = String(process.env.REACT_APP_API_URL || '').trim();
+const pointsToLocalApi = /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?(\/|$)/i.test(
+  configuredApiBaseUrl
+);
+
+const shouldUseConfiguredApiBaseUrl =
+  Boolean(configuredApiBaseUrl) && (!pointsToLocalApi || isRunningOnLocalHost());
+
+export const API_BASE_URL = shouldUseConfiguredApiBaseUrl
+  ? configuredApiBaseUrl
+  : resolveDefaultApiBaseUrl();
 const DEFAULT_API_TIMEOUT_MS = 15000;
 const parsedTimeout = Number(process.env.REACT_APP_API_TIMEOUT_MS);
 const API_TIMEOUT_MS =

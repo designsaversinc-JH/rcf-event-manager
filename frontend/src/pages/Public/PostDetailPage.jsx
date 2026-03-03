@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import { fetchLanding, fetchPublicBlog } from '../../api/public';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const stripScripts = (html) =>
   String(html || '')
@@ -163,6 +164,59 @@ const PostDetailPage = () => {
     };
   }, [blog]);
 
+  const canonicalPath = blog ? `/blogs/${blog.blogURL || identifier}` : `/blogs/${identifier}`;
+  const seoImage =
+    blog?.coverImg ||
+    settings?.public_logo_url ||
+    'https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg';
+  const structuredData = useMemo(() => {
+    const siteName = settings?.site_title || 'Envision Wealth Planning';
+    const canonicalUrl =
+      typeof window !== 'undefined' ? `${window.location.origin}${canonicalPath}` : canonicalPath;
+
+    if (!blog) {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: `Blog | ${siteName}`,
+        url: canonicalUrl,
+      };
+    }
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': blog.blogType === 'video' ? 'VideoObject' : 'Article',
+      headline: blog.title,
+      description: blog.summary || 'Read practical wealth planning insights from Envision Wealth Planning.',
+      image: seoImage,
+      datePublished: blog.publishDate || undefined,
+      author: {
+        '@type': 'Organization',
+        name: blog.author || siteName,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: siteName,
+        logo: {
+          '@type': 'ImageObject',
+          url: settings?.public_logo_url || seoImage,
+        },
+      },
+      mainEntityOfPage: canonicalUrl,
+      url: canonicalUrl,
+      embedUrl: blog.blogType === 'video' ? embeddedVideoUrl || undefined : undefined,
+    };
+  }, [blog, canonicalPath, embeddedVideoUrl, seoImage, settings]);
+
+  usePageMeta({
+    title: blog?.title ? `${blog.title} | ${settings?.site_title || 'Envision Wealth Planning'}` : 'Blog | Envision Wealth Planning',
+    description: blog?.summary || 'Read practical wealth planning insights from Envision Wealth Planning.',
+    canonicalUrl: canonicalPath,
+    image: seoImage,
+    type: blog?.blogType === 'video' ? 'video.other' : 'article',
+    structuredData,
+  });
+
   const onCopyLink = async () => {
     if (typeof window === 'undefined') return;
     try {
@@ -212,7 +266,7 @@ const PostDetailPage = () => {
             {blog.author || 'Envision Team'} • {blog.blogType} • {blog.category || 'General'}
           </p>
 
-          {blog.coverImg ? <img className="detail-cover" src={blog.coverImg} alt={blog.title} /> : null}
+          {blog.coverImg ? <img className="detail-cover" src={blog.coverImg} alt={blog.title} loading="eager" decoding="async" /> : null}
 
           {blog.blogType === 'video' && embeddedVideoUrl ? (
             <div className="video-wrap">

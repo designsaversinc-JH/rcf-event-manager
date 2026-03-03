@@ -19,6 +19,7 @@ import {
 } from '../../api/admin';
 import { invalidatePublicContentCache } from '../../api/public';
 import { getAllPageContent, getPageContent } from '../../utils/pageContent';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const INTERNAL_ROUTE_CHOICES = [
   { label: 'Blogs Home', href: '/' },
@@ -81,6 +82,13 @@ const SettingsPage = () => {
   const [newTag, setNewTag] = useState('');
   const [inviteForm, setInviteForm] = useState(defaultInvite);
   const [saving, setSaving] = useState(false);
+
+  usePageMeta({
+    title: 'Site Settings | Envision Wealth Planning',
+    description: 'Configure app settings, branding, navigation, SEO, and team access.',
+    canonicalUrl: '/admin/settings',
+    noIndex: true,
+  });
 
   const load = async () => {
     const [settingsRes, navRes, catRes, tagRes, usersRes] = await Promise.all([

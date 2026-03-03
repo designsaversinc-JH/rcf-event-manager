@@ -43,6 +43,8 @@ const PublicBlogFooter = ({ settings, navigation = [] }) => {
             src={settings?.public_logo_url || LOGO_URL}
             alt="Envision Wealth Planning"
             className="footer-logo"
+            loading="lazy"
+            decoding="async"
           />
         </a>
 

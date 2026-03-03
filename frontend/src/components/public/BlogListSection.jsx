@@ -146,6 +146,8 @@ const BlogListSection = ({
                     <img
                       src={resolvedImage}
                       alt={blog.title}
+                      loading="lazy"
+                      decoding="async"
                       onError={() =>
                         setFailedImages((prev) => ({
                           ...prev,

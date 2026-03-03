@@ -5,6 +5,7 @@ import {
   getCategories,
   updateCategory,
 } from '../../api/categories';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const emptyForm = {
   name: '',
@@ -19,6 +20,13 @@ const CategoriesPage = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  usePageMeta({
+    title: 'Categories | Envision Wealth Planning',
+    description: 'Create and manage blog categories.',
+    canonicalUrl: '/admin/categories',
+    noIndex: true,
+  });
 
   const loadCategories = async () => {
     try {

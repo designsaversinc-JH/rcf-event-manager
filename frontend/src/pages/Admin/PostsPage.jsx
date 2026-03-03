@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { deleteBlog, fetchAdminBlogs, updateBlog } from '../../api/admin';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const STATUS_OPTIONS = ['all', 'published', 'draft', 'pending_review', 'archived'];
 
@@ -29,6 +30,13 @@ const PostsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [confirmModal, setConfirmModal] = useState(null);
   const PAGE_SIZE = 8;
+
+  usePageMeta({
+    title: 'Manage Posts | Envision Wealth Planning',
+    description: 'Create, update, archive, and manage all blog and video posts.',
+    canonicalUrl: '/admin/posts',
+    noIndex: true,
+  });
 
   const load = async () => {
     const response = await fetchAdminBlogs();

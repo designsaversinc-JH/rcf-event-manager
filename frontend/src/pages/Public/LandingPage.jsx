@@ -38,11 +38,42 @@ const LandingPage = () => {
     return [...(data.blogs || [])].slice(0, 3);
   }, [data.blogs]);
   const landingPageContent = useMemo(() => getPageContent(data.settings, 'landing'), [data.settings]);
+  const canonicalPath = landingPageContent.canonical_url || '/';
+  const canonicalHref = useMemo(() => {
+    if (typeof window === 'undefined') return canonicalPath;
+    if (/^https?:\/\//i.test(canonicalPath)) return canonicalPath;
+    return `${window.location.origin}${canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`}`;
+  }, [canonicalPath]);
+  const websiteTitle = data.settings?.site_title || 'Envision Wealth Planning';
+  const seoImage =
+    data.settings?.public_logo_url ||
+    'https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg';
+
+  const structuredData = useMemo(
+    () => ([
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: websiteTitle,
+        url: canonicalHref,
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Envision Wealth Planning',
+        url: canonicalHref,
+        logo: seoImage,
+      },
+    ]),
+    [canonicalHref, seoImage, websiteTitle]
+  );
 
   usePageMeta({
-    title: landingPageContent.meta_title || data.settings?.site_title || 'Envision Wealth Planning',
+    title: landingPageContent.meta_title || websiteTitle,
     description: landingPageContent.meta_description,
-    canonicalUrl: landingPageContent.canonical_url,
+    canonicalUrl: canonicalPath,
+    image: seoImage,
+    structuredData,
   });
 
   if (loading) {
@@ -71,7 +102,7 @@ const LandingPage = () => {
               <article key={blog.id} className="blog-card compact-card">
                 {blog.coverImg ? (
                   <div className="card-image-wrap">
-                    <img src={blog.coverImg} alt={blog.title} />
+                    <img src={blog.coverImg} alt={blog.title} loading="lazy" decoding="async" />
                   </div>
                 ) : null}
                 <div className="blog-card-body">

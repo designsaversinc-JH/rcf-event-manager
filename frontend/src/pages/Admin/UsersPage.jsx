@@ -8,6 +8,7 @@ import {
   updateUserRole,
   updateUserStatus,
 } from '../../api/users';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const defaultForm = {
   firstName: '',
@@ -25,6 +26,13 @@ const UsersPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  usePageMeta({
+    title: 'Team Access | Envision Wealth Planning',
+    description: 'Manage admin users, roles, and workspace access.',
+    canonicalUrl: '/admin/users',
+    noIndex: true,
+  });
 
   const loadUsers = async () => {
     try {

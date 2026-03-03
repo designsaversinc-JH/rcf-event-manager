@@ -20,6 +20,9 @@ const PublicBlogHeader = ({ settings, navigation = [] }) => {
             src={settings?.public_logo_url || LOGO_URL}
             alt="Envision Wealth Planning"
             className="brand-logo-img"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
         </a>
 

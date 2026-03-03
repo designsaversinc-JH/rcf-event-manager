@@ -4,6 +4,7 @@ import useAuth from '../../hooks/useAuth';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import { fetchLanding } from '../../api/public';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,13 @@ const LoginPage = () => {
   const [navigation, setNavigation] = useState([]);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  usePageMeta({
+    title: 'Admin Login | Envision Wealth Planning',
+    description: 'Secure login for the Envision Wealth Planning admin dashboard.',
+    canonicalUrl: '/admin/login',
+    noIndex: true,
+  });
 
   useEffect(() => {
     const load = async () => {

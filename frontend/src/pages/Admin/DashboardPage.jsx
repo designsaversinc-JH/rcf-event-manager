@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchDashboard } from '../../api/admin';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const DashboardPage = () => {
   const [data, setData] = useState(null);
+
+  usePageMeta({
+    title: 'Admin Dashboard | Envision Wealth Planning',
+    description: 'Overview of publishing metrics, status trends, and content activity.',
+    canonicalUrl: '/admin/dashboard',
+    noIndex: true,
+  });
 
   useEffect(() => {
     const load = async () => {

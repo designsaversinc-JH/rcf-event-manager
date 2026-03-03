@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import { fetchProfile, saveProfile } from '../../api/admin';
+import usePageMeta from '../../hooks/usePageMeta';
 
 const ProfilePage = () => {
   const { setUserProfile } = useAuth();
@@ -14,6 +15,13 @@ const ProfilePage = () => {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
+  });
+
+  usePageMeta({
+    title: 'Profile Settings | Envision Wealth Planning',
+    description: 'Update your profile details and account password.',
+    canonicalUrl: '/admin/profile',
+    noIndex: true,
   });
 
   useEffect(() => {
