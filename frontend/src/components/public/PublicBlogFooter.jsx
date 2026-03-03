@@ -61,7 +61,7 @@ const PublicBlogFooter = ({ settings, navigation = [] }) => {
               </a>
             )
           )}
-          <Link to="/admin/login" className="footer-admin-link">Admin</Link>
+          <Link to="/admin/dashboard" className="footer-admin-link">Admin</Link>
         </nav>
 
         <div className="footer-social">
