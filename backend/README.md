@@ -1,6 +1,6 @@
-# BlogFlow API (Express + PostgreSQL)
+# Roseland Ceasefire API (Express + Neon PostgreSQL)
 
-Backend service powering the BlogFlow blog management platform. Provides RESTful endpoints for posts, categories, users, and authentication with JWT.
+Backend service powering the Roseland Ceasefire blog management platform. Provides RESTful endpoints for posts, categories, users, and authentication with JWT.
 
 ## Features
 - Structured Express app with routers, controllers, and models.
@@ -18,7 +18,7 @@ Backend service powering the BlogFlow blog management platform. Provides RESTful
    ```
 2. Copy `.env` and populate required variables:
    ```env
-   DATABASE_URL=postgres://user:password@host:5432/blogflow
+   DATABASE_URL=postgresql://<user>:<password>@<neon-host>/<db>?sslmode=require
    PORT=5000
    CLIENT_URL=http://localhost:3000
    JWT_SECRET=change_me_to_something_long

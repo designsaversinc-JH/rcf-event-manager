@@ -1,10 +1,10 @@
 :root {
-  --brand-blue: #0f86b7;
-  --brand-blue-dark: #04597a;
-  --brand-gold: #f3b323;
-  --ink: #101820;
-  --muted: #4f5f6b;
-  --surface: #f7fafc;
+  --brand-blue: #f2a900;
+  --brand-blue-dark: #1a1a1a;
+  --brand-gold: #ffbf1f;
+  --ink: #121212;
+  --muted: #4a4a4a;
+  --surface: #fff6de;
 }
 
 html,

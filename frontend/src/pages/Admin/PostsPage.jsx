@@ -32,8 +32,8 @@ const PostsPage = () => {
   const PAGE_SIZE = 8;
 
   usePageMeta({
-    title: 'Manage Posts | Envision Wealth Planning',
-    description: 'Create, update, archive, and manage all blog and video posts.',
+    title: 'Manage Events | Roseland Ceasefire',
+    description: 'Create, update, archive, and manage all event and video updates.',
     canonicalUrl: '/admin/posts',
     noIndex: true,
   });
@@ -50,8 +50,8 @@ const PostsPage = () => {
   const onDelete = async (id) => {
     setConfirmModal({
       type: 'single-delete',
-      title: 'Delete blog?',
-      message: 'This blog will be permanently removed.',
+      title: 'Delete event?',
+      message: 'This event entry will be permanently removed.',
       targetId: id,
     });
   };
@@ -96,7 +96,7 @@ const PostsPage = () => {
     if (!selectedIds.length) return;
     setConfirmModal({
       type: 'bulk-delete',
-      title: `Delete ${selectedIds.length} selected blogs?`,
+      title: `Delete ${selectedIds.length} selected events?`,
       message: 'This action cannot be undone.',
     });
   };
@@ -177,21 +177,21 @@ const PostsPage = () => {
     <section className="admin-section">
       <div className="page-title-row">
         <div>
-          <h2>Blog Manager</h2>
+          <h2>Event Manager</h2>
           <p className="section-subtle">
-            Manage lifecycle: publish, hold in review, draft updates, or archive.
+            Manage event lifecycle: publish, hold in review, draft updates, or archive.
           </p>
         </div>
-        <Link className="button-link" to="/admin/posts/new">Create Post</Link>
+        <Link className="button-link" to="/admin/posts/new">Create Event</Link>
       </div>
 
       <div className="stat-grid">
-        <article><h3>{metrics.total}</h3><p>Total Posts</p></article>
+        <article><h3>{metrics.total}</h3><p>Total Events</p></article>
         <article><h3>{metrics.published}</h3><p>Published</p></article>
         <article><h3>{metrics.draft}</h3><p>Draft</p></article>
         <article><h3>{metrics.pending_review}</h3><p>Pending Review</p></article>
         <article><h3>{metrics.archived}</h3><p>Archived</p></article>
-        <article><h3>{metrics.videos}</h3><p>Video Posts</p></article>
+        <article><h3>{metrics.videos}</h3><p>Video Events</p></article>
       </div>
 
       <div className="admin-filters">
@@ -324,7 +324,7 @@ const PostsPage = () => {
             {!pagedBlogs.length && (
               <tr>
                 <td colSpan={6} className="table-empty">
-                  No posts match the current filters.
+                  No events match the current filters.
                 </td>
               </tr>
             )}

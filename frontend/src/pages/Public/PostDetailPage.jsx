@@ -4,6 +4,7 @@ import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import { fetchLanding, fetchPublicBlog } from '../../api/public';
 import usePageMeta from '../../hooks/usePageMeta';
+import { BRAND_NAME, BRAND_SEO_IMAGE_FALLBACK } from '../../config/branding';
 
 const stripScripts = (html) =>
   String(html || '')
@@ -147,7 +148,7 @@ const PostDetailPage = () => {
 
     const url = window.location.href;
     const subject = encodeURIComponent(blog.title);
-    const body = encodeURIComponent(`Check out this blog: ${url}`);
+    const body = encodeURIComponent(`Check out this event update: ${url}`);
     const linkedInUrl = encodeURIComponent(url);
     const xText = encodeURIComponent(`${blog.title} ${url}`);
     const fbUrl = encodeURIComponent(url);
@@ -165,12 +166,9 @@ const PostDetailPage = () => {
   }, [blog]);
 
   const canonicalPath = blog ? `/blogs/${blog.blogURL || identifier}` : `/blogs/${identifier}`;
-  const seoImage =
-    blog?.coverImg ||
-    settings?.public_logo_url ||
-    'https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg';
+  const seoImage = blog?.coverImg || settings?.public_logo_url || BRAND_SEO_IMAGE_FALLBACK;
   const structuredData = useMemo(() => {
-    const siteName = settings?.site_title || 'Envision Wealth Planning';
+    const siteName = settings?.site_title || BRAND_NAME;
     const canonicalUrl =
       typeof window !== 'undefined' ? `${window.location.origin}${canonicalPath}` : canonicalPath;
 
@@ -178,7 +176,7 @@ const PostDetailPage = () => {
       return {
         '@context': 'https://schema.org',
         '@type': 'WebPage',
-        name: `Blog | ${siteName}`,
+        name: `Event | ${siteName}`,
         url: canonicalUrl,
       };
     }
@@ -187,7 +185,7 @@ const PostDetailPage = () => {
       '@context': 'https://schema.org',
       '@type': blog.blogType === 'video' ? 'VideoObject' : 'Article',
       headline: blog.title,
-      description: blog.summary || 'Read practical wealth planning insights from Envision Wealth Planning.',
+      description: blog.summary || 'Explore community events and updates from Roseland Ceasefire.',
       image: seoImage,
       datePublished: blog.publishDate || undefined,
       author: {
@@ -209,8 +207,8 @@ const PostDetailPage = () => {
   }, [blog, canonicalPath, embeddedVideoUrl, seoImage, settings]);
 
   usePageMeta({
-    title: blog?.title ? `${blog.title} | ${settings?.site_title || 'Envision Wealth Planning'}` : 'Blog | Envision Wealth Planning',
-    description: blog?.summary || 'Read practical wealth planning insights from Envision Wealth Planning.',
+    title: blog?.title ? `${blog.title} | ${settings?.site_title || BRAND_NAME}` : `Event | ${BRAND_NAME}`,
+    description: blog?.summary || 'Explore community events and updates from Roseland Ceasefire.',
     canonicalUrl: canonicalPath,
     image: seoImage,
     type: blog?.blogType === 'video' ? 'video.other' : 'article',
@@ -241,13 +239,13 @@ const PostDetailPage = () => {
   };
 
   if (loading) {
-    return <div className="page-loading">Loading blog...</div>;
+    return <div className="page-loading">Loading event...</div>;
   }
 
   if (!blog) {
     return (
       <div className="detail-page">
-        <h1>Blog not found</h1>
+        <h1>Event not found</h1>
         <Link to="/">Back to home</Link>
       </div>
     );
@@ -259,11 +257,11 @@ const PostDetailPage = () => {
       <article className="detail-page rich-detail">
         <div className="detail-main">
           <Link to="/all-blogs" className="detail-back">
-            ← Back to all blogs
+            ← Back to all events
           </Link>
           <h1>{blog.title}</h1>
           <p className="meta">
-            {blog.author || 'Envision Team'} • {blog.blogType} • {blog.category || 'General'}
+            {blog.author || 'Roseland Team'} • {blog.blogType} • {blog.category || 'General'}
           </p>
 
           {blog.coverImg ? <img className="detail-cover" src={blog.coverImg} alt={blog.title} loading="eager" decoding="async" /> : null}
@@ -317,7 +315,7 @@ const PostDetailPage = () => {
           </section>
 
           <section className="related-box">
-            <h3>Related Articles</h3>
+            <h3>Related Events</h3>
             <div className="related-list">
               {related.map((item) => (
                 <Link key={item.id} to={`/blogs/${item.blogURL || item.id}`} className="related-item">

@@ -22,8 +22,8 @@ const CategoriesPage = () => {
   const [error, setError] = useState('');
 
   usePageMeta({
-    title: 'Categories | Envision Wealth Planning',
-    description: 'Create and manage blog categories.',
+    title: 'Categories | Roseland Ceasefire',
+    description: 'Create and manage event categories.',
     canonicalUrl: '/admin/categories',
     noIndex: true,
   });
@@ -88,7 +88,7 @@ const CategoriesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this category? Posts will remain without it.')) {
+    if (!window.confirm('Delete this category? Existing events will remain without it.')) {
       return;
     }
 
@@ -206,7 +206,7 @@ const CategoriesPage = () => {
             ))}
             {!categories.length && (
               <div className="empty-state">
-                <p>Start by creating a category to organize your posts.</p>
+                <p>Start by creating a category to organize your events.</p>
               </div>
             )}
           </div>

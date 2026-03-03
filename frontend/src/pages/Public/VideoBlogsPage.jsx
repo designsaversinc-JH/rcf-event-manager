@@ -5,25 +5,24 @@ import BlogListSection from '../../components/public/BlogListSection';
 import { fetchLanding } from '../../api/public';
 import { getPageContent } from '../../utils/pageContent';
 import usePageMeta from '../../hooks/usePageMeta';
+import { BRAND_NAME, BRAND_SEO_IMAGE_FALLBACK } from '../../config/branding';
 
 const VideoBlogsPage = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ blogs: [], categories: [], tags: [], settings: null, navigation: [] });
   const pageContent = getPageContent(data.settings, 'video_blogs');
   const canonicalPath = pageContent.canonical_url || '/video-blogs';
-  const seoImage =
-    data.settings?.public_logo_url ||
-    'https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg';
+  const seoImage = data.settings?.public_logo_url || BRAND_SEO_IMAGE_FALLBACK;
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: pageContent.meta_title || `${data.settings?.site_title || 'Envision Wealth Planning'} | Video Blogs`,
+    name: pageContent.meta_title || `${data.settings?.site_title || BRAND_NAME} | Video Events`,
     description: pageContent.meta_description,
     url: canonicalPath,
   };
 
   usePageMeta({
-    title: pageContent.meta_title || `${data.settings?.site_title || 'Envision Wealth Planning'} | Video Blogs`,
+    title: pageContent.meta_title || `${data.settings?.site_title || BRAND_NAME} | Video Events`,
     description: pageContent.meta_description,
     canonicalUrl: canonicalPath,
     image: seoImage,
@@ -52,8 +51,8 @@ const VideoBlogsPage = () => {
       <PublicBlogHeader settings={data.settings} navigation={data.navigation || []} />
       <section className="hero compact-hero small-hero">
         <div className="hero-content compact-hero-content">
-          <h1>{pageContent.title || 'Video Blogs'}</h1>
-          <p>{pageContent.subtext || 'Watch planning insights and advisor walkthroughs.'}</p>
+          <h1>{pageContent.title || 'Video Events'}</h1>
+          <p>{pageContent.subtext || 'Watch event recaps, interviews, and community highlights.'}</p>
         </div>
       </section>
 

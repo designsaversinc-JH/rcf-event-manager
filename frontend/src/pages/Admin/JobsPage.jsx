@@ -18,7 +18,7 @@ const JobsPage = () => {
   const [editingId, setEditingId] = useState(null);
 
   usePageMeta({
-    title: 'Jobs | Envision Wealth Planning',
+    title: 'Jobs | Roseland Ceasefire',
     description: 'Manage career listings and application links.',
     canonicalUrl: '/admin/jobs',
     noIndex: true,

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { fetchSettings } from '../../api/admin';
+import { BRAND_LOGO_FALLBACK, BRAND_SHORT_NAME } from '../../config/branding';
 
-const DEFAULT_LOGO =
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png';
+const DEFAULT_LOGO = BRAND_LOGO_FALLBACK;
 
 const AdminLayout = () => {
   const { user, logout } = useAuth();
@@ -33,12 +33,12 @@ const AdminLayout = () => {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <div className="brand-block">
-          <p className="brand-kicker">Client Console</p>
+          <p className="brand-kicker">{BRAND_SHORT_NAME} Console</p>
           <img className="admin-sidebar-logo" src={adminLogoUrl} alt="Admin logo" />
         </div>
         <nav className="admin-nav">
           <NavLink to="/admin/dashboard">Dashboard</NavLink>
-          <NavLink to="/admin/posts">Blogs</NavLink>
+          <NavLink to="/admin/posts">Events</NavLink>
           <NavLink to="/admin/profile">Profile</NavLink>
           <NavLink to="/admin/settings">Settings</NavLink>
           <NavLink to="/admin/help">Help</NavLink>

@@ -48,8 +48,8 @@ const PostEditorPage = () => {
   const isEdit = useMemo(() => Boolean(id), [id]);
 
   usePageMeta({
-    title: `${isEdit ? 'Edit Post' : 'Create Post'} | Envision Wealth Planning`,
-    description: 'Create and edit written or video posts for the blog.',
+    title: `${isEdit ? 'Edit Event' : 'Create Event'} | Roseland Ceasefire`,
+    description: 'Create and edit written or video event updates.',
     canonicalUrl: isEdit ? `/admin/posts/${id}/edit` : '/admin/posts/new',
     noIndex: true,
   });
@@ -102,7 +102,7 @@ const PostEditorPage = () => {
     try {
       const url = await uploadFileToFirebaseStorage({
         file: coverFile,
-        folder: 'blog-covers',
+        folder: 'event-covers',
       });
       setForm((prev) => ({ ...prev, coverImg: url }));
       setCoverFile(null);
@@ -120,7 +120,7 @@ const PostEditorPage = () => {
     try {
       const url = await uploadFileToFirebaseStorage({
         file: videoFile,
-        folder: 'blog-videos',
+        folder: 'event-videos',
       });
       setForm((prev) => ({ ...prev, vlogURL: url, vlogEmbed: '' }));
       setVideoFile(null);
@@ -155,7 +155,7 @@ const PostEditorPage = () => {
 
   return (
     <section className="editor-page-shell">
-      <h2>{isEdit ? 'Edit Blog' : 'Create Blog'}</h2>
+      <h2>{isEdit ? 'Edit Event' : 'Create Event'}</h2>
       <form className="editor-form compact-editor">
         <label>Title</label>
         <input name="title" value={form.title} onChange={onChange} required />
@@ -180,7 +180,7 @@ const PostEditorPage = () => {
             </select>
           </div>
           <div>
-            <label>Blog Type</label>
+            <label>Event Type</label>
             <select name="blogType" value={form.blogType} onChange={onChange}>
               <option value="written">Written</option>
               <option value="video">Video</option>
@@ -204,7 +204,7 @@ const PostEditorPage = () => {
           </button>
         </div>
 
-        <label>Blog URL Slug</label>
+        <label>Event URL Slug</label>
         <input name="blogURL" value={form.blogURL} onChange={onChange} />
 
         <label>Tags (comma separated)</label>

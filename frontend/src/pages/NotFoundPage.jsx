@@ -4,7 +4,7 @@ import usePageMeta from '../hooks/usePageMeta';
 
 const NotFoundPage = () => {
   usePageMeta({
-    title: 'Page Not Found | Envision Wealth Planning',
+    title: 'Page Not Found | Roseland Ceasefire',
     description: 'The requested page could not be found.',
     noIndex: true,
   });

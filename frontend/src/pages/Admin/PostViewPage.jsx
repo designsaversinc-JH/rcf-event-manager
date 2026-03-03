@@ -56,8 +56,8 @@ const PostViewPage = () => {
   const [blog, setBlog] = useState(null);
 
   usePageMeta({
-    title: blog?.title ? `${blog.title} | Admin View` : 'View Post | Envision Wealth Planning',
-    description: blog?.summary || 'Preview post details in the admin dashboard.',
+    title: blog?.title ? `${blog.title} | Admin View` : 'View Event | Roseland Ceasefire',
+    description: blog?.summary || 'Preview event details in the admin dashboard.',
     canonicalUrl: `/admin/posts/${id}/view`,
     image: blog?.coverImg || '',
     type: blog?.blogType === 'video' ? 'video.other' : 'article',
@@ -83,14 +83,14 @@ const PostViewPage = () => {
   }, [blog]);
 
   if (loading) {
-    return <div className="page-loading">Loading blog details...</div>;
+    return <div className="page-loading">Loading event details...</div>;
   }
 
   if (!blog) {
     return (
       <section className="admin-section">
-        <h2>Blog not found</h2>
-        <Link className="table-link-btn" to="/admin/posts">Back to blogs</Link>
+        <h2>Event not found</h2>
+        <Link className="table-link-btn" to="/admin/posts">Back to events</Link>
       </section>
     );
   }

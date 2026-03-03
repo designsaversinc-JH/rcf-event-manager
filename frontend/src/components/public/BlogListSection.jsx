@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import EmptyList from './EmptyList';
 
 const VIDEO_PLACEHOLDER_URL =
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/envision-wealth-xq36fc/assets/03q1z4ndqvbn/Untitled_(2).jpeg';
+  '/rcf-wordmark.svg';
 
 const formatDate = (value) => {
   if (!value) return 'Unscheduled';
@@ -91,7 +91,7 @@ const BlogListSection = ({
         <input
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          placeholder="Search title, category, tags"
+          placeholder="Search event title, category, tags"
         />
 
         <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
@@ -163,10 +163,10 @@ const BlogListSection = ({
                     {blog.category || 'General'} • {formatDate(blog.publishDate)}
                   </p>
                   <h3>{blog.title}</h3>
-                  <p>{blog.summary || 'Read this post for details and insights.'}</p>
+                  <p>{blog.summary || 'View this event update for details and next steps.'}</p>
                   <div className="card-footer">
                     <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
-                      {isVideo ? 'Watch now' : 'Read article'}
+                      {isVideo ? 'Watch now' : 'View details'}
                     </Link>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ const BlogListSection = ({
 
       {!filtered.length ? (
         <EmptyList
-          title="No blogs available"
+          title="No events available"
           description="No items match your filters right now. Try another category or tag."
         />
       ) : null}

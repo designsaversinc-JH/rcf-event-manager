@@ -22,12 +22,12 @@ import { getAllPageContent, getPageContent } from '../../utils/pageContent';
 import usePageMeta from '../../hooks/usePageMeta';
 
 const INTERNAL_ROUTE_CHOICES = [
-  { label: 'Blogs Home', href: '/' },
-  { label: 'All Blogs', href: '/all-blogs' },
-  { label: 'Video Blogs', href: '/video-blogs' },
+  { label: 'Events Home', href: '/' },
+  { label: 'All Events', href: '/all-blogs' },
+  { label: 'Video Events', href: '/video-blogs' },
   { label: 'Admin Dashboard', href: '/admin/dashboard' },
-  { label: 'Manage Blogs', href: '/admin/posts' },
-  { label: 'Create Blog', href: '/admin/posts/new' },
+  { label: 'Manage Events', href: '/admin/posts' },
+  { label: 'Create Event', href: '/admin/posts/new' },
   { label: 'Settings', href: '/admin/settings' },
 ];
 
@@ -45,21 +45,21 @@ const PAGE_CONFIGS = [
     key: 'landing',
     label: 'Landing Page',
     route: '/',
-    description: 'Main homepage hero and featured posts section.',
+    description: 'Main homepage hero and featured events section.',
     showSectionFields: true,
   },
   {
     key: 'all_blogs',
-    label: 'All Blogs Page',
+    label: 'All Events Page',
     route: '/all-blogs',
-    description: 'Header and metadata for the all blogs listing page.',
+    description: 'Header and metadata for the all events listing page.',
     showSectionFields: false,
   },
   {
     key: 'video_blogs',
-    label: 'Video Blogs Page',
+    label: 'Video Events Page',
     route: '/video-blogs',
-    description: 'Header and metadata for the video blogs page.',
+    description: 'Header and metadata for the video events page.',
     showSectionFields: false,
   },
 ];
@@ -84,7 +84,7 @@ const SettingsPage = () => {
   const [saving, setSaving] = useState(false);
 
   usePageMeta({
-    title: 'Site Settings | Envision Wealth Planning',
+    title: 'Site Settings | Roseland Ceasefire',
     description: 'Configure app settings, branding, navigation, SEO, and team access.',
     canonicalUrl: '/admin/settings',
     noIndex: true,
@@ -171,7 +171,7 @@ const SettingsPage = () => {
       <div className="settings-row">
         <div>
           <strong>Hero Title</strong>
-          <p>Main heading for the blog landing page.</p>
+          <p>Main heading for the event landing page.</p>
         </div>
         <input
           value={settings.hero_title || ''}
@@ -462,7 +462,7 @@ const SettingsPage = () => {
               </div>
               <input
                 value={item.href}
-                placeholder="/all-blogs or https://example.com/page"
+                placeholder="/all-blogs or https://example.com/event-page"
                 onChange={(e) => {
                   const next = [...navigation];
                   next[index] = { ...item, href: e.target.value };
@@ -545,7 +545,7 @@ const SettingsPage = () => {
   const renderTaxonomyTab = () => (
     <section className="settings-pane-card">
       <h3>Categories & Tags</h3>
-      <p className="settings-help">Maintain content taxonomy used in filters and organization.</p>
+      <p className="settings-help">Maintain event taxonomy used in filters and organization.</p>
 
       <div className="settings-split">
         <div className="settings-subcard compact-taxonomy-card">

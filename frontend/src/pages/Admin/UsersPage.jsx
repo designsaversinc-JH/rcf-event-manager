@@ -28,7 +28,7 @@ const UsersPage = () => {
   const [busy, setBusy] = useState(false);
 
   usePageMeta({
-    title: 'Team Access | Envision Wealth Planning',
+    title: 'Team Access | Roseland Ceasefire',
     description: 'Manage admin users, roles, and workspace access.',
     canonicalUrl: '/admin/users',
     noIndex: true,

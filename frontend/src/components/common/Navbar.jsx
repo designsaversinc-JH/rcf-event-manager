@@ -5,7 +5,7 @@ const Navbar = () => (
   <header className="navbar">
     <div className="container navbar__content">
       <Link to="/" className="navbar__brand">
-        <span className="navbar__logo">BlogFlow</span>
+        <span className="navbar__logo">Roseland Ceasefire</span>
       </Link>
       <nav className="navbar__nav">
         <NavLink

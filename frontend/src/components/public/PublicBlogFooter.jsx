@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const LOGO_URL =
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png';
-const MAIN_SITE_URL = 'https://envisionwealth.us/';
+import {
+  BRAND_LOGO_FALLBACK,
+  BRAND_MAIN_SITE_URL,
+  BRAND_NAME,
+} from '../../config/branding';
 
 const isInternalHref = (href) => String(href || '').trim().startsWith('/');
 
@@ -38,10 +39,10 @@ const PublicBlogFooter = ({ settings, navigation = [] }) => {
   return (
     <footer className="public-footer">
       <div className="public-footer-inner">
-        <a href={MAIN_SITE_URL} target="_blank" rel="noreferrer" className="footer-brand-link">
+        <a href={BRAND_MAIN_SITE_URL} target="_blank" rel="noreferrer" className="footer-brand-link">
           <img
-            src={settings?.public_logo_url || LOGO_URL}
-            alt="Envision Wealth Planning"
+            src={settings?.public_logo_url || BRAND_LOGO_FALLBACK}
+            alt={BRAND_NAME}
             className="footer-logo"
             loading="lazy"
             decoding="async"
@@ -64,17 +65,8 @@ const PublicBlogFooter = ({ settings, navigation = [] }) => {
         </nav>
 
         <div className="footer-social">
-          <a href="https://www.facebook.com/envisionwealth" target="_blank" rel="noreferrer" aria-label="Facebook">
+          <a href={BRAND_MAIN_SITE_URL} target="_blank" rel="noreferrer" aria-label={BRAND_NAME}>
             <SocialIcon name="facebook" />
-          </a>
-          <a href="https://www.linkedin.com/company/envisionwealth" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-            <SocialIcon name="linkedin" />
-          </a>
-          <a href="https://www.youtube.com/@envisionwealthplanningchic2051" target="_blank" rel="noreferrer" aria-label="YouTube">
-            <SocialIcon name="youtube" />
-          </a>
-          <a href="https://bsky.app/profile/envisionwealth.bsky.social" target="_blank" rel="noreferrer" aria-label="Bluesky">
-            <SocialIcon name="bluesky" />
           </a>
         </div>
       </div>

@@ -5,6 +5,7 @@ import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import { fetchLanding } from '../../api/public';
 import usePageMeta from '../../hooks/usePageMeta';
+import { BRAND_SHORT_NAME } from '../../config/branding';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -17,8 +18,8 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   usePageMeta({
-    title: 'Admin Login | Envision Wealth Planning',
-    description: 'Secure login for the Envision Wealth Planning admin dashboard.',
+    title: 'Admin Login | Roseland Ceasefire',
+    description: 'Secure login for the Roseland Ceasefire admin dashboard.',
     canonicalUrl: '/admin/login',
     noIndex: true,
   });
@@ -57,7 +58,7 @@ const LoginPage = () => {
       <PublicBlogHeader settings={settings} navigation={navigation} />
       <div className="login-shell">
         <form className="login-card" onSubmit={onSubmit}>
-          <p className="brand-kicker">Client Admin</p>
+          <p className="brand-kicker">{BRAND_SHORT_NAME} Admin</p>
           <h1>Dashboard Login</h1>
           <p className="login-subtext">Sign in with your approved admin account.</p>
 

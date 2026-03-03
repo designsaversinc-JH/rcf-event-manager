@@ -1,4 +1,4 @@
-# Blog + Jobs Management App (Rebuilt)
+# Roseland Ceasefire Event + Blog Management App
 
 This project was rebuilt as a simple full-stack app for your client workflow:
 - Public landing page with branded hero, dynamic navigation, published blogs, and open jobs.
@@ -9,16 +9,22 @@ This project was rebuilt as a simple full-stack app for your client workflow:
 
 ## Stack
 - Frontend: React + React Router + Axios
-- Backend: Express + PostgreSQL + JWT auth
+- Backend: Express + Neon PostgreSQL + JWT auth
 - Firebase: Auth (admin sign-in) + Storage (blog image/video uploads)
+
+## Database (Neon)
+- Runtime data storage is PostgreSQL only (recommended: Neon).
+- Set backend `DATABASE_URL` to your Neon pooled connection string, for example:
+  - `postgresql://<user>:<password>@<your-neon-host>/<dbname>?sslmode=require`
+- `backend/src/routes/publicRoutes.js` now reads categories/tags/blogs directly from Neon-backed tables with no Firestore fallback.
 
 ## Admin Access
 - Public self-signup is disabled by default for production safety.
 - Admin users should be created by an existing admin in `Settings > Team & Access`, or directly in the `admin_users` table.
 - If you need temporary public signup for onboarding, set backend env `ALLOW_PUBLIC_SIGNUP=true` and disable it after onboarding.
 
-## Firebase Schema Mapping
-The backend schema mirrors your Firebase fields using SQL tables:
+## Neon Schema Mapping
+The backend schema mirrors your content fields using SQL tables:
 - `blogs` (title, content, publishDate, author, status, category, coverImg, blogURL, summary, blogType, vlogContent, vlogEmbed, vlogURL, timestamps)
 - `categories` (id, name, description, timestamps)
 - `tags` (id, name, timestamps)
@@ -60,6 +66,12 @@ Backend requires a Firebase service account to verify Firebase ID tokens:
 - `FIREBASE_CLIENT_EMAIL`
 - `FIREBASE_PRIVATE_KEY` (use escaped newlines: `\n`)
 - `FIREBASE_STORAGE_BUCKET`
+
+## New Firebase Project Checklist
+- Create a new Firebase project for Roseland Ceasefire.
+- Enable Email/Password in Firebase Authentication.
+- Create a Web App and copy all `REACT_APP_FIREBASE_*` values into `frontend/.env.local`.
+- Generate a service account key and copy values to backend `.env` (`FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`).
 
 ## Firestore to Neon Import
 To pull existing Firestore blog data into Neon (categories, tags, blogs):

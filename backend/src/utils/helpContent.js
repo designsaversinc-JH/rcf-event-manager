@@ -1,12 +1,12 @@
 const HELP_CONTENT = {
   updatedAt: '2026-02-16',
-  title: 'Blog Manager Help Center',
+  title: 'Event Manager Help Center',
   intro:
-    'Use this guide to manage navigation, publish blogs, organize taxonomy, and maintain team access in the admin dashboard.',
+    'Use this guide to manage navigation, publish events, organize taxonomy, and maintain team access in the admin dashboard.',
   quickStart: [
     'Sign in at /admin/login with an approved admin account.',
     'Use Dashboard for a quick status summary.',
-    'Create and edit blogs from Blogs.',
+    'Create and edit events from Events.',
     'Control page copy, SEO, navigation, categories, tags, and team access from Settings.',
   ],
   faq: [
@@ -24,9 +24,9 @@ const HELP_CONTENT = {
     },
     {
       id: 'faq-3',
-      question: 'How do I create a video blog post?',
+      question: 'How do I create a video event post?',
       answer:
-        'Open Blogs > New Blog, set type to video, provide embed/video details, and publish.',
+        'Open Events > New Event, set type to video, provide embed/video details, and publish.',
     },
     {
       id: 'faq-4',

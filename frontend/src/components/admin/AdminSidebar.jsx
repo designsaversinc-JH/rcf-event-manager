@@ -11,7 +11,7 @@ const navItems = [
 const AdminSidebar = () => (
   <aside className="admin-sidebar">
     <div>
-      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>BlogFlow Admin</span>
+      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Roseland Ceasefire Admin</span>
       <h2 style={{ margin: '0.25rem 0 0', fontSize: '1.35rem', color: '#0f172a' }}>
         Control Panel
       </h2>

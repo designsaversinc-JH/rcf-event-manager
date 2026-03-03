@@ -7,7 +7,7 @@ const HelpPage = () => {
   const [data, setData] = useState(null);
 
   usePageMeta({
-    title: 'Help Center | Envision Wealth Planning',
+    title: 'Help Center | Roseland Ceasefire',
     description: 'Documentation, quick start steps, and FAQs for admin users.',
     canonicalUrl: '/admin/help',
     noIndex: true,

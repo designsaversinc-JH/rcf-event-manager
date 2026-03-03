@@ -5,6 +5,7 @@ import PublicBlogFooter from '../../components/public/PublicBlogFooter';
 import { fetchLanding } from '../../api/public';
 import { getPageContent } from '../../utils/pageContent';
 import usePageMeta from '../../hooks/usePageMeta';
+import { BRAND_NAME, BRAND_SEO_IMAGE_FALLBACK } from '../../config/branding';
 
 const formatDate = (value) => {
   if (!value) return 'Unscheduled';
@@ -44,10 +45,8 @@ const LandingPage = () => {
     if (/^https?:\/\//i.test(canonicalPath)) return canonicalPath;
     return `${window.location.origin}${canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`}`;
   }, [canonicalPath]);
-  const websiteTitle = data.settings?.site_title || 'Envision Wealth Planning';
-  const seoImage =
-    data.settings?.public_logo_url ||
-    'https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg';
+  const websiteTitle = data.settings?.site_title || BRAND_NAME;
+  const seoImage = data.settings?.public_logo_url || BRAND_SEO_IMAGE_FALLBACK;
 
   const structuredData = useMemo(
     () => ([
@@ -60,7 +59,7 @@ const LandingPage = () => {
       {
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        name: 'Envision Wealth Planning',
+        name: BRAND_NAME,
         url: canonicalHref,
         logo: seoImage,
       },
@@ -77,7 +76,7 @@ const LandingPage = () => {
   });
 
   if (loading) {
-    return <div className="page-loading">Loading blogs...</div>;
+    return <div className="page-loading">Loading events...</div>;
   }
 
   return (
@@ -86,15 +85,15 @@ const LandingPage = () => {
 
       <section className="hero compact-hero">
         <div className="hero-content compact-hero-content">
-          <h1>{landingPageContent.title || data.settings?.hero_title || 'Welcome to Envision Blogs'}</h1>
-          <p>{landingPageContent.subtext || data.settings?.hero_subtitle || 'Tool and strategies modern teams need to help their companies grow.'}</p>
+          <h1>{landingPageContent.title || data.settings?.hero_title || 'Welcome to Roseland Ceasefire'}</h1>
+          <p>{landingPageContent.subtext || data.settings?.hero_subtitle || 'Community-first events, updates, and resources from Roseland.'}</p>
         </div>
       </section>
 
       <main className="landing-main compact-main">
         <div className="section-title-row">
-          <h2>{landingPageContent.section_title || 'Recent Posts'}</h2>
-          <p>{landingPageContent.section_subtext || 'Latest 3 insights from the editorial desk.'}</p>
+          <h2>{landingPageContent.section_title || 'Recent Events'}</h2>
+          <p>{landingPageContent.section_subtext || 'Latest event highlights from the team.'}</p>
         </div>
         <section className="landing-simple-section">
           <div className="landing-simple-grid">
@@ -110,10 +109,10 @@ const LandingPage = () => {
                     {blog.category || 'General'} * {formatDate(blog.publishDate)}
                   </p>
                   <h3>{blog.title}</h3>
-                  <p>{blog.summary || 'Read this post for details and insights.'}</p>
+                  <p>{blog.summary || 'View this event update for details and next steps.'}</p>
                   <div className="card-footer">
                     <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
-                      {blog.blogType === 'video' ? 'Watch now' : 'Read article'}
+                      {blog.blogType === 'video' ? 'Watch now' : 'View details'}
                     </Link>
                   </div>
                 </div>

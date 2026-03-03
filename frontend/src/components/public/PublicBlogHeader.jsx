@@ -1,9 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-
-const LOGO_URL =
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png';
-const MAIN_SITE_URL = 'https://envisionwealth.us/';
+import {
+  BRAND_LOGO_FALLBACK,
+  BRAND_MAIN_SITE_URL,
+  BRAND_NAME,
+} from '../../config/branding';
 
 const isInternalHref = (href) => String(href || '').trim().startsWith('/');
 
@@ -15,10 +16,10 @@ const PublicBlogHeader = ({ settings, navigation = [] }) => {
   return (
     <header className="blog-topbar">
       <div className="blog-topbar-inner">
-        <a href={MAIN_SITE_URL} target="_blank" rel="noreferrer" className="brand-logo-link">
+        <a href={BRAND_MAIN_SITE_URL} target="_blank" rel="noreferrer" className="brand-logo-link">
           <img
-            src={settings?.public_logo_url || LOGO_URL}
-            alt="Envision Wealth Planning"
+            src={settings?.public_logo_url || BRAND_LOGO_FALLBACK}
+            alt={BRAND_NAME}
             className="brand-logo-img"
             loading="eager"
             decoding="async"

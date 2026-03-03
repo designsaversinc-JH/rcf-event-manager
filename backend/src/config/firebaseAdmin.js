@@ -1,6 +1,5 @@
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
-const { getFirestore } = require('firebase-admin/firestore');
 
 const getFirebaseConfig = () => {
   const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -51,13 +50,7 @@ const verifyFirebaseIdToken = async (idToken) => {
   return auth.verifyIdToken(idToken);
 };
 
-const getFirestoreDb = () => {
-  const app = getFirebaseAdminApp();
-  return getFirestore(app);
-};
-
 module.exports = {
   isFirebaseAdminConfigured,
   verifyFirebaseIdToken,
-  getFirestoreDb,
 };

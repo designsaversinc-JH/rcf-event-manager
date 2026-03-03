@@ -1,6 +1,6 @@
-# BlogFlow Frontend
+# Roseland Ceasefire Frontend
 
-React SPA for the BlogFlow management platform. It covers the public blog experience and the authenticated admin workspace.
+React SPA for the Roseland Ceasefire management platform. It covers the public blog experience and the authenticated admin workspace.
 
 ## Highlights
 - **Public landing page** with featured story, category filters, and post cards.

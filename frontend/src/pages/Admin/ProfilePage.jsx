@@ -18,7 +18,7 @@ const ProfilePage = () => {
   });
 
   usePageMeta({
-    title: 'Profile Settings | Envision Wealth Planning',
+    title: 'Profile Settings | Roseland Ceasefire',
     description: 'Update your profile details and account password.',
     canonicalUrl: '/admin/profile',
     noIndex: true,
