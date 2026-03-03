@@ -218,14 +218,21 @@ INSERT INTO categories (id, name, description)
 VALUES
   ('cat-1', 'Market Insights', 'Updates on investment and financial planning trends.'),
   ('cat-2', 'Retirement', 'Retirement planning best practices and updates.'),
-  ('cat-3', 'Business Planning', 'Guidance for business owners and executives.')
+  ('cat-3', 'Business Planning', 'Guidance for business owners and executives.'),
+  ('cat-event-1', 'Community Safety', 'Violence prevention, safety planning, and neighborhood outreach.'),
+  ('cat-event-2', 'Youth Programs', 'Mentorship, learning, and youth-centered community events.'),
+  ('cat-event-3', 'Employment', 'Workforce development, hiring, and career readiness events.')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO tags (id, name)
 VALUES
   ('tag-1', 'investing'),
   ('tag-2', 'retirement'),
-  ('tag-3', 'business')
+  ('tag-3', 'business'),
+  ('tag-event-1', 'community'),
+  ('tag-event-2', 'workshop'),
+  ('tag-event-3', 'youth'),
+  ('tag-event-4', 'hiring')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO blogs (
@@ -276,6 +283,70 @@ VALUES
     'In this short video, we break down sequencing, taxes, and withdrawal discipline.',
     'https://www.youtube.com/embed/6Xbtf9W6_5k',
     'https://www.youtube.com/watch?v=6Xbtf9W6_5k'
+  ),
+  (
+    'event-1',
+    'Neighborhood Peace Walk and Resource Fair',
+    'Join residents, outreach teams, and local partners for a community peace walk followed by a resource fair with safety tools, family support services, and local program signups.',
+    NOW() + INTERVAL '7 days',
+    'Roseland Ceasefire Team',
+    'published',
+    'Community Safety',
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+    'neighborhood-peace-walk-resource-fair',
+    'A community peace walk and support resource fair for Roseland families.',
+    'written',
+    NULL,
+    NULL,
+    NULL
+  ),
+  (
+    'event-2',
+    'Youth Leadership Workshop: Summer 2026',
+    'This interactive workshop helps young leaders build communication skills, goal plans, and team collaboration habits for school and community impact.',
+    NOW() + INTERVAL '14 days',
+    'Roseland Ceasefire Team',
+    'published',
+    'Youth Programs',
+    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+    'youth-leadership-workshop-summer-2026',
+    'Hands-on youth leadership training with mentors and community partners.',
+    'written',
+    NULL,
+    NULL,
+    NULL
+  ),
+  (
+    'event-3',
+    'Community Hiring Day: Local Employers On Site',
+    'Meet local employers, receive resume support, and complete same-day interviews with partner organizations hiring for open roles in the area.',
+    NOW() + INTERVAL '21 days',
+    'Roseland Ceasefire Team',
+    'published',
+    'Employment',
+    'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+    'community-hiring-day-local-employers',
+    'A hiring day event connecting residents to local job opportunities.',
+    'written',
+    NULL,
+    NULL,
+    NULL
+  ),
+  (
+    'event-4',
+    'Video Recap: Back-to-School Family Support Day',
+    NULL,
+    NOW() - INTERVAL '3 days',
+    'Roseland Ceasefire Team',
+    'published',
+    'Community Safety',
+    'https://images.unsplash.com/photo-1511629091441-ee46146481b6?auto=format&fit=crop&w=1200&q=80',
+    'video-recap-back-to-school-family-support-day',
+    'Watch highlights from our recent family support and school readiness event.',
+    'video',
+    'A short recap featuring volunteers, families, and partner organizations.',
+    'https://www.youtube.com/embed/6Xbtf9W6_5k',
+    'https://www.youtube.com/watch?v=6Xbtf9W6_5k'
   )
 ON CONFLICT (id) DO NOTHING;
 
@@ -283,7 +354,14 @@ INSERT INTO blog_tags (blog_id, tag_id)
 VALUES
   ('blog-1', 'tag-1'),
   ('blog-1', 'tag-2'),
-  ('blog-2', 'tag-2')
+  ('blog-2', 'tag-2'),
+  ('event-1', 'tag-event-1'),
+  ('event-1', 'tag-event-2'),
+  ('event-2', 'tag-event-3'),
+  ('event-2', 'tag-event-2'),
+  ('event-3', 'tag-event-4'),
+  ('event-3', 'tag-event-1'),
+  ('event-4', 'tag-event-1')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO jobs (id, title, location, department, summary, apply_url, status, publish_date)

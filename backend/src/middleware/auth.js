@@ -10,6 +10,18 @@ const requireJwtSecret = () => {
 };
 
 const authenticate = async (req, res, next) => {
+  // Temporary review mode: disable auth checks for client walkthrough.
+  req.user = {
+    id: 'review-user',
+    email: 'review@roselandceasefire.org',
+    name: 'Review User',
+    role: 'admin',
+    is_active: true,
+  };
+  return next();
+
+  // Keep existing guard logic below for easy rollback after review.
+  // eslint-disable-next-line no-unreachable
   try {
     requireJwtSecret();
     const authHeader = req.headers.authorization;
@@ -44,6 +56,11 @@ const authenticate = async (req, res, next) => {
 };
 
 const requireAdmin = (req, res, next) => {
+  // Temporary review mode: allow all requests through.
+  return next();
+
+  // Keep existing guard logic below for easy rollback after review.
+  // eslint-disable-next-line no-unreachable
   if (!req.user) {
     return res.status(401).json({ message: 'Authentication required.' });
   }
