@@ -12,8 +12,6 @@ if (hasCloudinaryConfig) {
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true,
   });
-} else {
-  console.warn('[cloudinary] Cloudinary credentials are not fully configured.');
 }
 
 module.exports = {

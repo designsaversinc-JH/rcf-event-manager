@@ -1,15 +1,15 @@
 {
-  "short_name": "Envision",
-  "name": "Envision Wealth Planning",
+  "short_name": "RCF Events",
+  "name": "Roseland Ceasefire Event Manager",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg",
-      "type": "image/jpeg",
+      "src": "rcf-hd-logo.png",
+      "type": "image/png",
       "sizes": "64x64 192x192 512x512"
     },
     {
-      "src": "https://res.cloudinary.com/dvh84sf6c/image/upload/v1771230442/EnvisionWealthPlanningLogo-Icon_1_ebp5wf.jpg",
-      "type": "image/jpeg",
+      "src": "rcf-hd-logo.png",
+      "type": "image/png",
       "sizes": "32x32 24x24 16x16"
     }
   ],

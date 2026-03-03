@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PublicBlogHeader from '../../components/public/PublicBlogHeader';
 import PublicBlogFooter from '../../components/public/PublicBlogFooter';
+import EmptyList from '../../components/public/EmptyList';
 import { fetchLanding } from '../../api/public';
 import { getPageContent } from '../../utils/pageContent';
 import usePageMeta from '../../hooks/usePageMeta';
@@ -96,29 +97,36 @@ const LandingPage = () => {
           <p>{landingPageContent.section_subtext || 'Latest event highlights from the team.'}</p>
         </div>
         <section className="landing-simple-section">
-          <div className="landing-simple-grid">
-            {latest.map((blog) => (
-              <article key={blog.id} className="blog-card compact-card">
-                {blog.coverImg ? (
-                  <div className="card-image-wrap">
-                    <img src={blog.coverImg} alt={blog.title} loading="lazy" decoding="async" />
+          {latest.length ? (
+            <div className="landing-simple-grid">
+              {latest.map((blog) => (
+                <article key={blog.id} className="blog-card compact-card">
+                  {blog.coverImg ? (
+                    <div className="card-image-wrap">
+                      <img src={blog.coverImg} alt={blog.title} loading="lazy" decoding="async" />
+                    </div>
+                  ) : null}
+                  <div className="blog-card-body">
+                    <p className="meta">
+                      {blog.category || 'General'} * {formatDate(blog.publishDate)}
+                    </p>
+                    <h3>{blog.title}</h3>
+                    <p>{blog.summary || 'View this event update for details and next steps.'}</p>
+                    <div className="card-footer">
+                      <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
+                        {blog.blogType === 'video' ? 'Watch now' : 'View details'}
+                      </Link>
+                    </div>
                   </div>
-                ) : null}
-                <div className="blog-card-body">
-                  <p className="meta">
-                    {blog.category || 'General'} * {formatDate(blog.publishDate)}
-                  </p>
-                  <h3>{blog.title}</h3>
-                  <p>{blog.summary || 'View this event update for details and next steps.'}</p>
-                  <div className="card-footer">
-                    <Link to={`/blogs/${blog.blogURL || blog.id}`} className="card-cta">
-                      {blog.blogType === 'video' ? 'Watch now' : 'View details'}
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyList
+              title="No events available"
+              description="Events will appear here once they are published."
+            />
+          )}
         </section>
       </main>
 

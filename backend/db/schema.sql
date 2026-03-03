@@ -149,14 +149,14 @@ CREATE TABLE IF NOT EXISTS navigation_items (
 
 CREATE TABLE IF NOT EXISTS site_settings (
   id TEXT PRIMARY KEY,
-  site_title TEXT NOT NULL DEFAULT 'Envision Wealth Planning',
-  hero_title TEXT NOT NULL DEFAULT 'Align Your Investments & Retirement Plans With What Matters to You.',
-  hero_subtitle TEXT NOT NULL DEFAULT 'Strategic guidance and practical insight for families and businesses.',
-  primary_cta_label TEXT NOT NULL DEFAULT 'For Myself',
+  site_title TEXT NOT NULL DEFAULT 'Roseland Ceasefire',
+  hero_title TEXT NOT NULL DEFAULT 'Building Safety, Trust, and Opportunity in Roseland.',
+  hero_subtitle TEXT NOT NULL DEFAULT 'Community-led events, updates, and resources from Roseland Ceasefire.',
+  primary_cta_label TEXT NOT NULL DEFAULT 'View Events',
   primary_cta_href TEXT NOT NULL DEFAULT '/#blogs',
-  secondary_cta_label TEXT NOT NULL DEFAULT 'For My Business',
+  secondary_cta_label TEXT NOT NULL DEFAULT 'Community Jobs',
   secondary_cta_href TEXT NOT NULL DEFAULT '/#jobs',
-  accent_message TEXT NOT NULL DEFAULT 'Latest market insights and hiring updates.',
+  accent_message TEXT NOT NULL DEFAULT 'Latest event updates and community opportunities.',
   admin_logo_url TEXT,
   public_logo_url TEXT,
   page_content JSONB NOT NULL DEFAULT '{}'::jsonb,
@@ -201,16 +201,16 @@ INSERT INTO site_settings (
 )
 VALUES (
   'default',
-  'Envision Wealth Planning',
-  'Align Your Investments & Retirement Plans With What Matters to You.',
-  'Thoughtful planning, practical action, and clear communication for every chapter.',
-  'For Myself',
+  'Roseland Ceasefire',
+  'Building Safety, Trust, and Opportunity in Roseland.',
+  'Community-led events, updates, and resources from Roseland Ceasefire.',
+  'View Events',
   '/#blogs',
-  'For My Business',
+  'Community Jobs',
   '/#jobs',
-  'Founder James Brewer wins 2025 ESG Investment Advisor of the Year!',
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png',
-  'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/evision-wealth-bog-management-5fsiev/assets/67rajg4nyg8i/EW_Logo2022-01-1-1200x282.png'
+  'Latest event updates and community opportunities.',
+  '/rcf-hd-logo.png',
+  '/rcf-hd-logo.png'
 )
 ON CONFLICT (id) DO NOTHING;
 
